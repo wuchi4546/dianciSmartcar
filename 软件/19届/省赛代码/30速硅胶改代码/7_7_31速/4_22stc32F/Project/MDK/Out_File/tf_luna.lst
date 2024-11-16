@@ -1,0 +1,107 @@
+C251 COMPILER V5.60.0,  tf_luna                                                            15/07/24  23:32:36  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE tf_luna
+OBJECT MODULE PLACED IN .\Out_File\tf_luna.obj
+COMPILER INVOKED BY: D:\c51-keil\C251\BIN\C251.EXE Out_File\tf_luna.c XSMALL WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE IN
+                    -CDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\in
+                    -c;..\USER\src;..\..\Libraries\seekfree_components;.\Out_File) DEBUG PRINT(.\Out_File\tf_luna.lst) TABS(2) OBJECT(.\Out_F
+                    -ile\tf_luna.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          
+    3          
+    4            TF Lidar1;
+    5          
+    6          /**
+    7           * @brief     read luna dist data.
+    8           * @param[in] point Lidar para struct
+    9           * @return    return statue
+   10           * @note      
+   11           */
+   12          
+   13          int LunaReadDist(TF* lidar)
+   14          {
+   15   1          unsigned char buf[2];
+   16   1          int ret = I2C_RecvBytes(lidar->Address, REG_ADDR_DIST, &buf, sizeof (buf),1000);
+*** WARNING C98 IN LINE 16 OF Out_File\tf_luna.c: parameter 3: pointer to different objects
+*** WARNING C91 IN LINE 16 OF Out_File\tf_luna.c: '&': pointer to different objects
+   17   1          if(0 == ret)
+   18   1          {
+   19   2              lidar->distance = buf[0] + (buf[1] << 8);
+   20   2          }
+   21   1          return ret;
+   22   1      }
+   23          /**
+   24           * @brief     read luna amp data.
+   25           * @param[in] point Lidar para struct
+   26           * @return    return statue
+   27           * @note      
+   28           */
+   29          int LunaReadAmp(TF* lidar)
+   30          {
+   31   1          unsigned char buf[2];
+   32   1          int ret = I2C_RecvBytes(lidar->Address, 0x02, &buf, sizeof (buf),1000);
+*** WARNING C98 IN LINE 32 OF Out_File\tf_luna.c: parameter 3: pointer to different objects
+*** WARNING C91 IN LINE 32 OF Out_File\tf_luna.c: '&': pointer to different objects
+   33   1          if(0 == ret)
+   34   1          {
+   35   2              lidar->strength = buf[0] + (buf[1] << 8);
+   36   2          }
+   37   1          return ret;
+   38   1      }
+   39          /**
+   40           * @brief     read luna temp data.
+   41           * @param[in] point Lidar para struct
+   42           * @return    return statue
+   43           * @note      
+   44           */
+   45          int LunaReadTemp(TF* lidar)
+   46          {
+   47   1          unsigned char buf[2];
+   48   1          int ret = I2C_RecvBytes(lidar->Address, REG_ADDR_TEMP, &buf, sizeof (buf),1000);
+*** WARNING C98 IN LINE 48 OF Out_File\tf_luna.c: parameter 3: pointer to different objects
+*** WARNING C91 IN LINE 48 OF Out_File\tf_luna.c: '&': pointer to different objects
+   49   1          if(0 == ret)
+   50   1          {
+C251 COMPILER V5.60.0,  tf_luna                                                            15/07/24  23:32:36  PAGE 2   
+
+   51   2              lidar->temp = buf[0] + (buf[1] << 8);
+   52   2          }
+   53   1          return ret;
+   54   1      }
+   55          
+   56          
+   57          
+   58          
+   59          
+   60          
+   61          
+   62          
+   63          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       237     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        31     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  6 WARNING(S),  0 ERROR(S)

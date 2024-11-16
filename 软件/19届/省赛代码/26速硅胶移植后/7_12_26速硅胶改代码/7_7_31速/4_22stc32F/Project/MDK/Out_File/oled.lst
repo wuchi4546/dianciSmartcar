@@ -1,0 +1,362 @@
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE oled
+OBJECT MODULE PLACED IN .\Out_File\oled.obj
+COMPILER INVOKED BY: D:\c51-keil\C251\BIN\C251.EXE Out_File\oled.c XSMALL WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDI
+                    -R(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;.
+                    -.\USER\src;..\..\Libraries\seekfree_components;.\Out_File) DEBUG PRINT(.\Out_File\oled.lst) TABS(2) OBJECT(.\Out_File\ol
+                    -ed.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          
+    3          //控制周期
+    4          int time_counter = 0; //屏幕刷新
+    5          int ips_counter = 0; //屏幕清屏
+    6          int8 ips_page = 0; 
+    7          int abc=1345;
+    8          extern float set_turn;
+    9          
+   10          extern int judge_sign;    //元素判断启动标志
+   11          
+   12          extern char circle_count;   //圆环次数
+   13          extern  int shizi_count;    //十字次数
+   14          extern char barrier_count;  //避障次数
+   15          
+   16          //--------------------圆环
+   17          extern char circle_L;
+   18          extern char circle_R;
+   19          
+   20          extern float straight_inc;      //直道积分
+   21          extern int circle_inc;      //环岛编码器积分
+   22          extern float motor_inc;     //电机积分
+   23          
+   24          extern float s_r;
+   25          extern float s_r_RYUAN;
+   26          //////-------------------
+   27          
+   28          
+   29          extern char flag_SHIZI_KNN;
+   30          //---------------------------十字
+   31          
+   32          extern char flag_shizi;
+   33          extern int switch_shizi_circle;
+   34          void yuanshu(int sign);
+   35          //--------------------------
+   36          extern int collection_shizi[10];
+   37          extern int collection_shizi_R[10];
+   38          //----------------------  归一化
+   39          
+   40          //extern float save_max_adc[7];
+   41          //extern float save_min_adc[7]; 
+   42          //extern int target_adc;
+   43          
+   44          //extern float error_last;
+   45            extern float mask[2][7];
+   46            
+   47            
+   48          //////----------------------
+   49          
+   50          
+   51          
+   52          
+   53              char page_buf[60];
+   54           void IPS_page_show(void)
+   55          {
+   56   1        
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 2   
+
+   57   1        switch(ips_page)
+   58   1        {
+   59   2          case 0:
+   60   2               ips114_showint16(0,0,a);
+   61   2               ips114_showint16(0,7,ips_page);
+   62   2          break;
+   63   2          case 1:
+   64   2      
+   65   2      //      ips114_clear(WHITE);
+   66   2      //    ips114_showstr(0, 0, "acc.x=");
+   67   2      //    ips114_showstr(0, 1, "acc.y=");
+   68   2      //    ips114_showstr(0, 2, "acc.z=");
+   69   2      //    ips114_showstr(0, 0, "gyro.x=");
+   70   2      //    ips114_showstr(0, 1, "gyro.y=");
+   71   2      //    ips114_showstr(0, 2, "gyro.z=");
+   72   2      //    ips114_showint16(6*10, 0, imu660ra_gyro_x);
+   73   2      //    ips114_showint16(6*10, 1, imu660ra_gyro_y);
+   74   2      //    ips114_showint16(6*10, 2, imu660ra_gyro_z);
+   75   2          
+   76   2              
+   77   2              sprintf(page_buf,"L:%d ",circle_L);           
+   78   2              ips114_showstr(0,0,page_buf);
+   79   2              sprintf(page_buf,"R:%d ",circle_R);           
+   80   2              ips114_showstr(45,0,page_buf);
+   81   2              sprintf(page_buf,"s_r:%.2f   ",s_r*1000);           
+   82   2              ips114_showstr(0,1,page_buf);
+   83   2              sprintf(page_buf,"s_r_R:%.2f  ",s_r_RYUAN*1000);            
+   84   2              ips114_showstr(0,2,page_buf);
+   85   2              
+   86   2              sprintf(page_buf,"+:%d ",flag_shizi);           
+   87   2              ips114_showstr(80,0,page_buf);
+   88   2              
+   89   2          
+   90   2              sprintf(page_buf,"bz_F:%d ",bizhangSTARTFlag);            
+   91   2              ips114_showstr(0,3,page_buf);
+   92   2              sprintf(page_buf,"judge:%d ",judge_sign);           
+   93   2              ips114_showstr(60,3,page_buf);
+   94   2              
+   95   2              sprintf(page_buf,"zhi:%.2f  ",motor_inc-straight_inc);            
+   96   2              ips114_showstr(120,0,page_buf);
+   97   2              sprintf(page_buf,"YUAN:%d  ",circle_inc);           
+   98   2              ips114_showstr(120,1,page_buf);
+   99   2              sprintf(page_buf,"motor:%.2f  ",motor_inc);           
+  100   2              ips114_showstr(120,2,page_buf);
+  101   2          
+  102   2          
+  103   2              sprintf(page_buf,"err:%.2f  ",error);           //z角速度
+  104   2              ips114_showstr(140,3,page_buf);
+  105   2              sprintf(page_buf,"r_speed:%.2f  ",r_endspeed);            
+  106   2              ips114_showstr(140,4,page_buf);
+  107   2              sprintf(page_buf,"l_speed:%.2f  ",l_endspeed);            
+  108   2              ips114_showstr(140,5,page_buf);
+  109   2              
+  110   2              sprintf(page_buf,"cir_cou:%d",circle_count);            
+  111   2              ips114_showstr(140,7,page_buf);
+  112   2              sprintf(page_buf,"sz_count:%d    ",shizi_count);
+  113   2              ips114_showstr(140,6,page_buf);
+  114   2              sprintf(page_buf,"bz_count:%d    ",barrier_count);
+  115   2              ips114_showstr(0,6,page_buf);
+  116   2              
+  117   2      
+  118   2              sprintf(page_buf,"l_speed:%.1f  ",l_speed);           
+  119   2              ips114_showstr(0,4,page_buf);
+  120   2              sprintf(page_buf,"r_speed:%.1f  ",r_speed);           
+  121   2              ips114_showstr(0,5,page_buf);
+  122   2              
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 3   
+
+  123   2              
+  124   2              sprintf(page_buf,"X:%.2f ,%.2f ",x_inc,gyro_x);           //z角速度
+  125   2              ips114_showstr(0,7,page_buf);
+  126   2              
+  127   2      //        ips114_clear(WHITE);                  //清屏
+  128   2          
+  129   2      //        sprintf(page_buf,"Xds:%d  ",abc);           //z角速度
+  130   2      //        ips114_showstr(0,0,page_buf);         //显示字符串
+  131   2      //        sprintf(page_buf,"X:%.1f ,%.1f ",z_inc,gyro_z);           //z角速度
+  132   2      //        ips114_showstr(0,1,page_buf);
+  133   2      //    
+  134   2      //    
+  135   2      //    
+  136   2      ////        ips114_showstr(0,0,"pid canshu");         //显示字符串
+  137   2      ////        ips114_showuint16(0,1,abc);                       //显示一个16位无符号整数
+  138   2      //        ips114_showint32(0,2,abc,3);                      //显示一个32位有符号数  并去除无效0
+  139   2      //        ips114_showint32(0,3,-666,3);                     //显示一个32位有符号数  并去除无效0
+  140   2      //        ips114_showfloat(0,4,56.35,3,1);                  //显示一个浮点数        并去除整数部分无效0
+  141   2            break;
+  142   2      //    
+  143   2          case 2:                            ///////////////////////////ADC
+  144   2      
+  145   2            sprintf(page_buf,"R:%.1f    ",adc[0]*1000); 
+  146   2              ips114_showstr(0,0,page_buf);
+  147   2            sprintf(page_buf,"RS:%.1f    ",adc[1]*1000);
+  148   2              ips114_showstr(0,1,page_buf);
+  149   2            sprintf(page_buf,"RH:%.1f    ",adc[2]*1000);
+  150   2              ips114_showstr(0,2,page_buf);
+  151   2            sprintf(page_buf,"M:%.1f    ",adc[3]*1000);
+  152   2              ips114_showstr(0,3,page_buf);
+  153   2            sprintf(page_buf,"LH:%.1f    ",adc[4]*1000);
+  154   2              ips114_showstr(0,4,page_buf);
+  155   2            sprintf(page_buf,"LS:%.1f    ",adc[5]*1000);
+  156   2              ips114_showstr(0,5,page_buf);
+  157   2            sprintf(page_buf,"L:%.1f    ",adc[6]*1000);
+  158   2              ips114_showstr(0,6,page_buf);
+  159   2            sprintf(page_buf,"NAN:%.1f    ",adc[7]*1000);
+  160   2              ips114_showstr(0,7,page_buf);
+  161   2            sprintf(page_buf,"ips_page:%d    ",temp_count);
+  162   2              ips114_showstr(140,7,page_buf);
+  163   2          
+  164   2            sprintf(page_buf,"e:%.3f  ",error); 
+  165   2              ips114_showstr(96,0,page_buf);
+  166   2            sprintf(page_buf,"e_x:%.3f  ",error_xie);
+  167   2              ips114_showstr(96,1,page_buf);
+  168   2            sprintf(page_buf,"e_s:%.3f  ",error_shu);
+  169   2              ips114_showstr(96,2,page_buf);
+  170   2            sprintf(page_buf,"e_s2:%.3f  ",error_shu2);
+  171   2              ips114_showstr(96,3,page_buf);
+  172   2            sprintf(page_buf,"dis:%d"    ,Lidar1.distance);
+  173   2              ips114_showstr(100,4,page_buf);
+  174   2              
+  175   2            sprintf(page_buf,"shizi_count:%d ",shizi_count);  
+  176   2              ips114_showstr(100,5,page_buf);
+  177   2            sprintf(page_buf,"test_sign:%d ",switch_shizi_circle);  
+  178   2              ips114_showstr(100,6,page_buf);
+  179   2              
+  180   2            if(switch_shizi_circle == 1)
+  181   2            {
+  182   3              sprintf(page_buf,"|%d ",collection_shizi[0]); 
+  183   3                ips114_showstr(188,0,page_buf);
+  184   3              sprintf(page_buf,"|%d ",collection_shizi[1]);
+  185   3                ips114_showstr(188,1,page_buf);
+  186   3              sprintf(page_buf,"|%d ",collection_shizi[2]);
+  187   3                ips114_showstr(188,2,page_buf);
+  188   3              sprintf(page_buf,"|%d ",collection_shizi[3]);
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 4   
+
+  189   3                ips114_showstr(188,3,page_buf);
+  190   3              sprintf(page_buf,"|%d ",collection_shizi[4]);
+  191   3                ips114_showstr(188,4,page_buf);
+  192   3              
+  193   3            sprintf(page_buf,"|%d ",collection_shizi[5]);
+  194   3              ips114_showstr(215,0,page_buf);
+  195   3            sprintf(page_buf,"|%d ",collection_shizi[6]);
+  196   3              ips114_showstr(215,1,page_buf);
+  197   3            sprintf(page_buf,"|%d ",collection_shizi[7]);
+  198   3              ips114_showstr(215,2,page_buf);
+  199   3            sprintf(page_buf,"|%d ",collection_shizi[8]);
+  200   3              ips114_showstr(215,3,page_buf);
+  201   3            sprintf(page_buf,"|%d ",collection_shizi[9]);
+  202   3              ips114_showstr(215,4,page_buf);
+  203   3            }
+  204   2          
+  205   2          if(switch_shizi_circle == 2)
+  206   2          {
+  207   3            sprintf(page_buf,"|%d ",collection_shizi_R[0]); 
+  208   3              ips114_showstr(188,0,page_buf);
+  209   3            sprintf(page_buf,"|%d ",collection_shizi_R[1]);
+  210   3              ips114_showstr(188,1,page_buf);
+  211   3            sprintf(page_buf,"|%d ",collection_shizi_R[2]);
+  212   3              ips114_showstr(188,2,page_buf);
+  213   3            sprintf(page_buf,"|%d ",collection_shizi_R[3]);
+  214   3              ips114_showstr(188,3,page_buf);
+  215   3            sprintf(page_buf,"|%d ",collection_shizi_R[4]);
+  216   3              ips114_showstr(188,4,page_buf);
+  217   3            
+  218   3            sprintf(page_buf,"|%d ",collection_shizi_R[5]);
+  219   3              ips114_showstr(215,0,page_buf);
+  220   3            sprintf(page_buf,"|%d ",collection_shizi_R[6]);
+  221   3              ips114_showstr(215,1,page_buf);
+  222   3            sprintf(page_buf,"|%d ",collection_shizi_R[7]);
+  223   3              ips114_showstr(215,2,page_buf);
+  224   3            sprintf(page_buf,"|%d ",collection_shizi_R[8]);
+  225   3              ips114_showstr(215,3,page_buf);
+  226   3            sprintf(page_buf,"|%d ",collection_shizi_R[9]);
+  227   3              ips114_showstr(215,4,page_buf);
+  228   3            
+  229   3            
+  230   3            }
+  231   2      //      sprintf(page_buf,"error_x:%.3f ",error_xie);
+  232   2      //        ips114_showstr(100,6,page_buf);
+  233   2      //      sprintf(page_buf,"error_s:%.3f ",error_shu);
+  234   2      //        ips114_showstr(100,7,page_buf);
+  235   2            
+  236   2              
+  237   2      //      sprintf(page_buf,"shu:%.2f",error_shu);
+  238   2      //      oled_p6x8str(50,3,page_buf);
+  239   2      //      sprintf(page_buf,"xie:%.2f    ",error_xie);
+  240   2      //      oled_p6x8str(50,5,page_buf);
+  241   2      //      sprintf(page_buf,"heng:%.2f    ",error_heng);
+  242   2      //      oled_p6x8str(50,4,page_buf);
+  243   2      //      sprintf(page_buf,"error:%.2f    ",error);
+  244   2      //      oled_p6x8str(50,6,page_buf);
+  245   2      //      sprintf(page_buf,"                       ");
+  246   2      //      oled_p6x8str(1,7,page_buf);
+  247   2            break;
+  248   2          
+  249   2          case 3:
+  250   2            
+  251   2            switch(key_function_flag)
+  252   2            {
+  253   3              case 1:
+  254   3                sprintf(page_buf,"fun:bizhang  ");  
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 5   
+
+  255   3                ips114_showstr(0,0,page_buf);
+  256   3                sprintf(page_buf,"%d   ",key_function_flag);  
+  257   3                ips114_showstr(120,0,page_buf);
+  258   3                break;
+  259   3              case 2:
+  260   3                sprintf(page_buf,"fun:YUAN  "); 
+  261   3                ips114_showstr(0,0,page_buf);
+  262   3                sprintf(page_buf,"%d   ",key_function_flag);  
+  263   3                ips114_showstr(120,0,page_buf);
+  264   3                break;
+  265   3              case 3:
+  266   3                sprintf(page_buf,"fun:speed  ");  
+  267   3                ips114_showstr(0,0,page_buf);
+  268   3                sprintf(page_buf,"%d   ",key_function_flag);  
+  269   3                ips114_showstr(120,0,page_buf);
+  270   3                break;
+  271   3              case 4:
+  272   3                sprintf(page_buf,"fun:cricle_function  ");  
+  273   3                ips114_showstr(0,0,page_buf);
+  274   3                sprintf(page_buf,"%d   ",key_function_flag);  
+  275   3                ips114_showstr(180,0,page_buf);
+  276   3                break;
+  277   3            }
+  278   2            
+  279   2            sprintf(page_buf,"YUAN:%d   ",cricle_order);  
+  280   2            ips114_showstr(0,1,page_buf);
+  281   2            sprintf(page_buf,"bizhang:%d   ",bizhang_order);  
+  282   2            ips114_showstr(0,2,page_buf);
+  283   2            sprintf(page_buf,"l-r speed:%.2f   %.2f   ",l_target_speed,r_target_speed); 
+  284   2            ips114_showstr(0,3,page_buf);
+  285   2            sprintf(page_buf,"cricle_function:%d   ",cricle_function_switch);           
+  286   2            ips114_showstr(0,4,page_buf);
+  287   2      
+  288   2      //----------------------------------------------------------------  
+  289   2            break;
+  290   2          
+  291   2          
+  292   2        }
+  293   1        
+  294   1      }
+  295          
+  296          
+  297          
+  298          void IPS(void)
+  299          {
+  300   1        time_counter++;
+  301   1        ips_counter++;
+  302   1        if(time_counter > 5)//25ms刷新一次屏幕
+  303   1        {   
+  304   2          time_counter = 0;
+  305   2      //    key();
+  306   2          IPS_page_show();    
+  307   2          if(ips_counter > 180)//刷新一次屏幕
+  308   2          {
+  309   3            ips_counter = 0;
+  310   3            ips114_clear(WHITE);  
+  311   3          }
+  312   2        }
+  313   1      
+  314   1      }
+  315          
+  316          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      2775     ------
+C251 COMPILER V5.60.0,  oled                                                               15/07/24  23:31:50  PAGE 6   
+
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        67     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       579     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

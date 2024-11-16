@@ -1,0 +1,323 @@
+C251 COMPILER V5.60.0,  iic_io                                                             15/07/24  23:31:50  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE iic_io
+OBJECT MODULE PLACED IN .\Out_File\iic_io.obj
+COMPILER INVOKED BY: D:\c51-keil\C251\BIN\C251.EXE Out_File\iic_io.c XSMALL WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INC
+                    -DIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc
+                    -;..\USER\src;..\..\Libraries\seekfree_components;.\Out_File) DEBUG PRINT(.\Out_File\iic_io.lst) TABS(2) OBJECT(.\Out_Fil
+                    -e\iic_io.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          
+    3          
+    4          /*************************************************
+    5          Function: User_I2C_Init
+    6          Description: config I2C 
+    7          *************************************************/
+    8          void User_I2C_Init(void)
+    9          {
+   10   1        I2C_SCL_H();
+   11   1        I2C_SDA_H();
+   12   1      }
+   13          
+   14          /*************************************************
+   15          Function: I2C_GenerateStart
+   16          Description: 
+   17          *************************************************/
+   18          static void I2C_GenerateStart(void)
+   19          {
+   20   1        
+   21   1          I2C_SDA_H();
+   22   1          I2C_SCL_H();
+   23   1          delay_us(5);
+   24   1          I2C_SDA_L();
+   25   1          delay_us(5);
+   26   1          I2C_SCL_L();
+   27   1          delay_us(5);
+   28   1      }
+   29          
+   30          /*************************************************
+   31          Function: I2C_GenerateStop
+   32          Description: 
+   33          *************************************************/
+   34          static void I2C_GenerateStop(void)
+   35          {
+   36   1          I2C_SCL_L();  
+   37   1          I2C_SDA_L();  
+   38   1          delay_us(5);  
+   39   1          I2C_SCL_H(); 
+   40   1          delay_us(5); 
+   41   1          I2C_SDA_H();  
+   42   1          delay_us(5); 
+   43   1      }
+   44          
+   45          
+   46          /*************************************************
+   47          Function: I2C_GenerateAck
+   48          Description: 
+   49          *************************************************/
+   50          static void I2C_GenerateAck(__I2C_ACK_TypeDef ack)
+   51          {
+   52   1          if(ack == I2C_NACK) 
+   53   1        {
+   54   2              I2C_SDA_H();
+   55   2        }
+   56   1          else
+C251 COMPILER V5.60.0,  iic_io                                                             15/07/24  23:31:50  PAGE 2   
+
+   57   1        {
+   58   2              I2C_SDA_L();
+   59   2        }
+   60   1        
+   61   1          delay_us(5);    
+   62   1          I2C_SCL_H();
+   63   1          delay_us(5);
+   64   1          I2C_SCL_L();
+   65   1      }
+   66          
+   67          /*************************************************
+   68          Function: I2C_RecvAck
+   69          Description: 
+   70          *************************************************/
+   71          static __I2C_ACK_TypeDef I2C_RecvAck(unsigned long Timeout)
+   72          {
+   73   1        unsigned long timeout = 0;
+   74   1          __I2C_ACK_TypeDef ackStatus;
+   75   1        
+   76   1        I2C_SDA_H();
+   77   1         
+   78   1          delay_us(5);
+   79   1        I2C_SCL_H();
+   80   1          delay_us(5);
+   81   1        
+   82   1        while(1)
+   83   1        {
+   84   2          ackStatus = (USER_I2C_SDA_PIN == 0) ? I2C_ACK : I2C_NACK;
+   85   2          if(ackStatus == I2C_ACK)
+   86   2          {
+   87   3            break;
+   88   3          }
+   89   2          
+   90   2          if((timeout++) > Timeout)
+   91   2          {
+   92   3            ackStatus = I2C_NACK;
+   93   3            break;
+   94   3          }
+   95   2        }
+   96   1      
+   97   1          I2C_SCL_L();
+   98   1          delay_us(5);
+   99   1          return ackStatus;  
+  100   1      }
+  101          
+  102          
+  103          /*************************************************
+  104          Function: I2C_SendByte
+  105          Description: 
+  106          *************************************************/
+  107          static __I2C_ACK_TypeDef I2C_SendByte(u8 tdata, u32 Timeout)
+  108          {
+  109   1          u32 i;
+  110   1        
+  111   1          I2C_SCL_L();
+  112   1        
+  113   1          for (i = 0; i < 8; i++)      
+  114   1          {
+  115   2              if((tdata << i)&0x80)
+  116   2              {
+  117   3                  I2C_SDA_H();
+  118   3              }
+  119   2              else 
+  120   2              {
+  121   3                  I2C_SDA_L();
+  122   3              }
+C251 COMPILER V5.60.0,  iic_io                                                             15/07/24  23:31:50  PAGE 3   
+
+  123   2              
+  124   2              I2C_SCL_H();               
+  125   2              delay_us(5);             
+  126   2              I2C_SCL_L();    
+  127   2              delay_us(5);   
+  128   2          }
+  129   1      
+  130   1          return I2C_RecvAck(Timeout);
+  131   1      }
+  132          
+  133          
+  134          /*************************************************
+  135          Function: I2C_RecvByte
+  136          Description: 
+  137          *************************************************/
+  138          static u8 I2C_RecvByte(void)
+  139          {
+  140   1          u32 i;
+  141   1          u32 tdata = 0; 
+  142   1          u32 BitStatus = 0;
+  143   1          
+  144   1          I2C_SDA_H();
+  145   1         
+  146   1          delay_us(5);
+  147   1          for (i = 0; i < 8; i++)
+  148   1          {  
+  149   2              tdata <<= 1;
+  150   2              I2C_SCL_H(); 
+  151   2              delay_us(5); 
+  152   2          
+  153   2              BitStatus = (USER_I2C_SDA_PIN == 1) ? 1 : 0;
+  154   2              tdata |= BitStatus;     
+  155   2          
+  156   2              I2C_SCL_L();
+  157   2              delay_us(5);
+  158   2          }
+  159   1        
+  160   1          return tdata;
+  161   1      }
+  162          
+  163          
+  164          
+  165          
+  166          
+  167          /*************************************************
+  168          Function: I2C_DummyWrite
+  169          Description: I2C DummyWrite
+  170          *************************************************/
+  171          static __I2C_Status_TypeDef I2C_DummyWrite(u8 SlaveAddr, u8 RegAddr, u32 Timeout)
+  172          {
+  173   1        /* Generate Start Sign */
+  174   1        I2C_GenerateStart();
+  175   1        
+  176   1        /* Send Slave Address */
+  177   1        if(I2C_SendByte((SlaveAddr<<1) | I2C_Transmitter, Timeout) != I2C_ACK)
+  178   1        {
+  179   2          I2C_GenerateStop();
+  180   2          return I2C_ERROR;
+  181   2        }
+  182   1      
+  183   1        if(I2C_SendByte(RegAddr , Timeout) != I2C_ACK)
+  184   1        {
+  185   2          I2C_GenerateStop();
+  186   2          return I2C_ERROR;
+  187   2        }
+  188   1        
+C251 COMPILER V5.60.0,  iic_io                                                             15/07/24  23:31:50  PAGE 4   
+
+  189   1      
+  190   1        return I2C_OK;
+  191   1      }
+  192          
+  193          /*************************************************
+  194          Function: I2C_SendBytes
+  195          Description: I2C SendBytes
+  196          *************************************************/
+  197          __I2C_Status_TypeDef I2C_SendBytes(u8 SlaveAddr, u16 RegAddr, u8 *TxBuf, u8 OperLen, u32 Timeout)
+  198          {
+  199   1        u8 i = 0;
+  200   1        
+  201   1        /* Dummy Write */
+  202   1        if(I2C_DummyWrite(SlaveAddr, RegAddr, Timeout) != I2C_OK)
+*** WARNING C188 IN LINE 202 OF Out_File\iic_io.c: 'parameter 2': value truncated
+*** WARNING C188 IN LINE 202 OF Out_File\iic_io.c: 'parameter 2': value truncated
+  203   1        {
+  204   2          I2C_GenerateStop();
+  205   2          return I2C_ERROR;
+  206   2        }
+  207   1      
+  208   1        /* Generate Start Sign */
+  209   1        I2C_GenerateStart();
+  210   1      
+  211   1        /* Send Slave Address */
+  212   1        if(I2C_SendByte((SlaveAddr<<1) | I2C_Transmitter, Timeout) != I2C_ACK)
+  213   1        {
+  214   2          I2C_GenerateStop();
+  215   2          return I2C_ERROR;
+  216   2        }
+  217   1        
+  218   1        /* Send Data */
+  219   1        for(i = 0; i < OperLen; i++)
+  220   1        {
+  221   2          if(I2C_SendByte(TxBuf[i], Timeout) != I2C_ACK)
+  222   2          {
+  223   3            I2C_GenerateStop();
+  224   3            return I2C_ERROR;
+  225   3          }
+  226   2        }
+  227   1      
+  228   1        /* Generate Stop Sign */
+  229   1        I2C_GenerateStop();
+  230   1        
+  231   1        return I2C_OK;
+  232   1      }
+  233          
+  234          
+  235          /*************************************************
+  236          Function: I2C_RecvBytes
+  237          Description: I2C SendBytes
+  238          *************************************************/
+  239          __I2C_Status_TypeDef I2C_RecvBytes(u8 SlaveAddr, u8 RegAddr, u8 *Rxbuf, u8 OperLen, u32 Timeout)
+  240          {
+  241   1        u8 i = 0;
+  242   1        
+  243   1        /* Dummy Write */
+  244   1        if(I2C_DummyWrite(SlaveAddr, RegAddr, Timeout) != I2C_OK)
+  245   1        {
+  246   2          I2C_GenerateStop();
+  247   2          return I2C_ERROR;
+  248   2        }
+  249   1      
+  250   1        /* Generate Start Sign */
+  251   1        I2C_GenerateStart();
+  252   1        
+C251 COMPILER V5.60.0,  iic_io                                                             15/07/24  23:31:50  PAGE 5   
+
+  253   1        /* Send Slave Address */
+  254   1        if(I2C_SendByte((SlaveAddr<<1) | I2C_Receiver, Timeout) != I2C_ACK)
+  255   1        {
+  256   2          I2C_GenerateStop();
+  257   2          return I2C_ERROR;
+  258   2        }
+  259   1        
+  260   1        /* Receive Data */
+  261   1        for(i = 0; i < OperLen - 1; i++)
+  262   1        {
+  263   2          Rxbuf[i] = I2C_RecvByte();
+  264   2          I2C_GenerateAck(I2C_ACK);
+  265   2        }
+  266   1      
+  267   1        Rxbuf[OperLen - 1] = I2C_RecvByte();
+  268   1        I2C_GenerateAck(I2C_NACK);
+  269   1        
+  270   1        /* Generate Stop Sign */
+  271   1        I2C_GenerateStop();
+  272   1        
+  273   1        return I2C_OK;
+  274   1      }
+  275          
+  276          
+  277          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       890     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        64     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

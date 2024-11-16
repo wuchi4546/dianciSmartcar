@@ -1,0 +1,202 @@
+C251 COMPILER V5.60.0,  key                                                                15/07/24  23:32:35  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE key
+OBJECT MODULE PLACED IN .\Out_File\key.obj
+COMPILER INVOKED BY: D:\c51-keil\C251\BIN\C251.EXE Out_File\key.c XSMALL WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR
+                    -(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..
+                    -\USER\src;..\..\Libraries\seekfree_components;.\Out_File) DEBUG PRINT(.\Out_File\key.lst) TABS(2) OBJECT(.\Out_File\key.
+                    -obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          
+    3          extern float set_turn;
+    4          char bizhangSTARTFlag = 0;
+    5          int switch_shizi_circle = 0;      //元素测试显示切换
+    6          extern int judge_sign;    //元素判断启动标志
+    7          
+    8          
+    9          char motor_start = 0;
+   10          char key_function_flag = 1;
+   11          char cricle_order = 20;
+   12          char bizhang_order = 0;
+   13          char cricle_function_switch = 1;
+   14          
+   15          
+   16          void key(void)      //利用按键控制OLED
+   17          {
+   18   1        if(KEY0 == 0)      //切换模式
+   19   1        {
+   20   2          delay_ms(10);
+   21   2          if(KEY0 == 0)
+   22   2          {
+   23   3            while(KEY0 == 0);
+   24   3            
+   25   3            if(motor_start==1)
+   26   3            {
+   27   4              l_pwm=0;    //手动脱线保护
+   28   4              r_pwm=0;
+   29   4              mr_pid.Bias=0;
+   30   4              ml_pid.Bias=0;
+   31   4      
+   32   4              pwm_duty(MOTOR1,0); //左
+   33   4              pwm_duty(MOTOR2,0); //右
+   34   4              
+   35   4              motor_start = 0;
+   36   4              
+   37   4            }
+   38   3            else
+   39   3            {
+   40   4              motor_start = 1;
+   41   4            }
+   42   3          
+   43   3          }
+   44   2        }
+   45   1      
+   46   1        if(KEY1 == 0)
+   47   1        {
+   48   2          delay_ms(10);
+   49   2          if(KEY1 == 0)
+   50   2          {
+   51   3      
+   52   3            while(!KEY1); //等待按键松开
+   53   3            ips_page+=1;
+   54   3            if(ips_page==4)
+   55   3            {
+   56   4              ips_page=1;
+C251 COMPILER V5.60.0,  key                                                                15/07/24  23:32:35  PAGE 2   
+
+   57   4            }
+   58   3            
+   59   3          }
+   60   2        }
+   61   1        
+   62   1        
+   63   1        if(KEY2 == 0)         //向上切换页面
+   64   1        {
+   65   2          delay_ms(3);
+   66   2          if(KEY2 == 0)
+   67   2          {
+   68   3            while(KEY2 == 0);
+   69   3            
+   70   3            key_function_flag+=1;
+   71   3            if(key_function_flag==5)
+   72   3            {
+   73   4              key_function_flag=1;
+   74   4            }
+   75   3            
+   76   3            
+   77   3            
+   78   3          }
+   79   2        }
+   80   1        
+   81   1        if(KEY3 == 0)
+   82   1        {
+   83   2          delay_ms(10);
+   84   2          if(KEY3 == 0)
+   85   2          {
+   86   3            
+   87   3            while(KEY3 == 0);
+   88   3          
+   89   3            switch(key_function_flag) //功能键
+   90   3            {
+   91   4              case 1:   //避障顺序
+   92   4                
+   93   4                bizhang_order += 2;
+   94   4                if(bizhang_order > 20)
+   95   4                {
+   96   5                  bizhang_order = 0;
+   97   5                }
+   98   4                break;
+   99   4              
+  100   4              case 2:   //圆环顺序
+  101   4                
+  102   4                cricle_order += 2;
+  103   4                if(cricle_order > 20)
+  104   4                {
+  105   5                  cricle_order = 0;
+  106   5                }
+  107   4                break;
+  108   4              
+  109   4              case 3:   //改变速度
+  110   4                
+  111   4                r_target_speed += 2;
+  112   4                l_target_speed += 2;
+  113   4                target_speed_save = l_target_speed;
+  114   4                break;
+  115   4              
+  116   4              case 4:
+  117   4                
+  118   4                cricle_function_switch++;
+  119   4                if(cricle_function_switch > 1)
+  120   4                {
+  121   5                  cricle_function_switch = 0;
+  122   5                }
+C251 COMPILER V5.60.0,  key                                                                15/07/24  23:32:35  PAGE 3   
+
+  123   4                
+  124   4            }
+  125   3              
+  126   3          }
+  127   2        }
+  128   1        
+  129   1        if(KEY4 == 0)
+  130   1        {
+  131   2          delay_ms(10);
+  132   2          if(KEY4 == 0)
+  133   2          {
+  134   3            while(KEY4 == 0); //等待按键松开
+  135   3            
+  136   3          switch(key_function_flag)
+  137   3            {
+  138   4              case 1:
+  139   4                
+  140   4                bizhang_order += -1;
+  141   4                break;
+  142   4              
+  143   4              case 2:
+  144   4                
+  145   4                cricle_order += -1;
+  146   4                break;
+  147   4              
+  148   4              case 3:
+  149   4                
+  150   4                r_target_speed += -1;
+  151   4                l_target_speed += -1;
+  152   4                target_speed_save = l_target_speed;
+  153   4                break;
+  154   4              
+  155   4            }
+  156   3          }
+  157   2        }
+  158   1        
+  159   1        
+  160   1      }
+  161          
+  162          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       515     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =         8     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        36     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

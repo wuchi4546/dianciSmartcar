@@ -1,0 +1,724 @@
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE element
+OBJECT MODULE PLACED IN .\Out_File\element.obj
+COMPILER INVOKED BY: D:\c51-keil\C251\BIN\C251.EXE Out_File\element.c XSMALL WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE IN
+                    -CDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\in
+                    -c;..\USER\src;..\..\Libraries\seekfree_components;.\Out_File) DEBUG PRINT(.\Out_File\element.lst) TABS(2) OBJECT(.\Out_F
+                    -ile\element.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          
+    3          int collection_shizi[10] = {1,1,1,1,1,1,1,1,1,1};
+    4          int collection_shizi_R[10] = {1,1,1,1,1,1,1,1,1,1};
+    5          
+    6          
+    7          //×óÓÒÔ²»·±êÖ¾Î»
+    8          char flag_circle=0;
+    9          
+   10          //Ô²»·ÅÐ¶Ï×´Ì¬Á¿
+   11          char circle_R=0;
+   12          char circle_L=0;
+   13          
+   14          //ÅÐ¶ÏÔ²»·Ê®×ÖµÄÊýÁ¿
+   15          char circle_count=0;
+   16          int shizi_count=0;
+   17          
+   18          
+   19          //Ê®×ÖÅÐ¶Ï±êÖ¾Î»
+   20          char flag_shizi=0;
+   21          char flag_shizi_R=0;
+   22          
+   23          //±ÜÕÏ±êÖ¾Î»
+   24          char barrier=0;     //¼ì²âÊÇ·ñ±ÜÕÏ
+   25          char flag_barrier=0;  
+   26          char barrier_count=0;
+   27          char bizhang=0;
+   28          
+   29          
+   30          
+   31            //µç¸Ð±ä»¯Ç÷ÊÆ
+   32          char adc_state[11]={0};
+   33          float adc_cons[11]={0};
+   34          
+   35          float straight_inc=0;     //Ö±µÀ»ý·Ö
+   36          int circle_inc=0;     //»·µº±àÂëÆ÷»ý·Ö
+   37          int cir_inc=0;
+   38          float motor_inc=0;      //µç»ú»ý·Ö
+   39          float bizhang_inc =0;   //±ÜÕÏ»ý·Ö
+   40          
+   41          int bizhang_window[5] = {1500,1500,1500,1500,1500}; //±ÜÕÏ»¬¶¯´°¿ÚÂË²¨
+   42          
+   43          float s_r = 3000;
+   44          float s_r_RYUAN = 3000;
+   45          
+   46          float s_r_SHIZI = 3000;
+   47          float s_r_RSHIZI = 3000;
+   48          float s_r_WSHIZI = 3000;  //ÉÏÊ®×Ö
+   49          float s_r_LSHIZI = 3000;  //×óÊ®×Ö
+   50          
+   51          //×óÓÒÔ²»·ÅÐ¶ÏãÐÖµ
+   52          int  HUANDAO_Ryuzhi=240;
+   53          int  HUANDAO_Lyuzhi=240;
+   54          
+   55          //Ê®×ÖÅÐ¶ÏãÐÖµ
+   56          int SHIZI_yuzhi=0;  
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 2   
+
+   57          int SHIZI_Ryuzhi=0;
+   58          
+   59          char flag_SHIZI_KNN = 0;
+   60          
+   61          char flag_zhijiao = 0;
+   62          char zhijiao_L = 0;
+   63          char zhijiao_R = 0;
+   64          //void SHIZI();
+   65          
+   66          char SHIZI(void);
+   67          
+   68          char cricle_count_order = 0;
+   69          float target_speed_save = 0;
+   70                                   
+   71          void judge(void)
+   72          {
+   73   1      
+   74   1        flag_circle=YUANHUAN();       //ÅÐ¶Ï×óÓÒÔ²»·
+   75   1        
+   76   1        if(flag_circle==1 && adc[3]>0.65 &&circle_R==0&&circle_L==0&&flag_shizi==0&&flag_shizi_R==0
+   77   1          &&flag_barrier==0 && fabs(error) < 1 && (((cricle_order >> cricle_count_order) & 1)|| cricle_order == 2
+             -0))    //ÅÐ¶Ï×óÈë»·
+   78   1        {
+   79   2          circle_L=1;straight_inc=motor_inc;
+   80   2          
+   81   2          buzzer=0; //·äÃùÆ÷¿ª
+   82   2          
+   83   2          
+   84   2        }
+   85   1        
+   86   1        
+   87   1        if(circle_L==1)
+   88   1        {
+   89   2         if(cricle_function_switch == 0)
+   90   2         {
+   91   3          if(motor_inc-straight_inc<=1250)
+   92   3          {
+   93   4      //      error=0.1;
+   94   4            
+   95   4          }
+   96   3          else if(motor_inc-straight_inc>1250)
+   97   3          {
+   98   4            
+   99   4            r_target_speed = 31.0;
+  100   4            l_target_speed = 31.0;
+  101   4            x_inc+=gyro_x*0.005;
+  102   4            if(x_inc<cir_inc) 
+  103   4            {
+  104   5              cir_inc=x_inc;  
+  105   5            }
+  106   4      //      circle_inc=(int)fabs(x_inc);
+  107   4            circle_inc=(int)fabs(cir_inc);
+  108   4            
+  109   4            buzzer=1;     //½øÓÒÔ²»··äÃùÆ÷¹Ø
+  110   4            
+  111   4            if(circle_inc<=350)
+  112   4            {
+  113   5      //        error=0.65;
+  114   5              error=-0.85;
+  115   5              
+  116   5            }
+  117   4            else
+  118   4            {
+  119   5              
+  120   5              buzzer = 0;   //³öÓÒÔ²»··äÃùÆ÷¿ª
+  121   5              r_target_speed = target_speed_save;
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 3   
+
+  122   5              l_target_speed = target_speed_save;
+  123   5              
+  124   5              circle_L = 2;
+  125   5              x_inc = 0;
+  126   5              cir_inc=0;
+  127   5              circle_inc = 0;
+  128   5              straight_inc = motor_inc;
+  129   5              
+  130   5            }
+  131   4          }
+  132   3         }
+  133   2          
+  134   2         else if(cricle_function_switch)
+  135   2         {
+  136   3          if(motor_inc-straight_inc<=500)
+  137   3          {
+  138   4            error=-0.05;
+  139   4            
+  140   4          }
+  141   3          else if(motor_inc-straight_inc>500)
+  142   3          {
+  143   4            x_inc+=gyro_x*0.005;
+  144   4            if(x_inc<cir_inc) 
+  145   4            {
+  146   5              cir_inc=x_inc;  
+  147   5            }
+  148   4      //      circle_inc=(int)fabs(x_inc);
+  149   4            circle_inc=(int)fabs(cir_inc);
+  150   4            
+  151   4            buzzer=1;   //·äÃùÆ÷¹Ø
+  152   4            
+  153   4            if(circle_inc<=25)
+  154   4            {
+  155   5              buzzer=0;
+  156   5              error=-0.51;
+  157   5            }
+  158   4            else if(circle_inc>25&&circle_inc<=360)
+  159   4            {
+  160   5              buzzer=1;
+  161   5              //error=(1.25*(sqrt(adc[0])-sqrt(adc[6]))+1.25*(sqrt(adc[1])-sqrt(adc[5])))/(adc[1]+adc[5]+adc[6]+adc
+             -[0]+1.35*adc[3]);
+  162   5            }
+  163   4      //      else if(circle_inc>320&&circle_inc<=350)
+  164   4      //      {
+  165   4      //        error=-0.62;
+  166   4      //        buzzer = 0;
+  167   4      //      }
+  168   4            else
+  169   4            {
+  170   5              
+  171   5            
+  172   5      //        buzzer = 0;   //³ö×óÔ²»··äÃùÆ÷¿ª
+  173   5              
+  174   5              circle_L = 2;
+  175   5              x_inc = 0;
+  176   5              cir_inc=0;
+  177   5              circle_inc = 0;
+  178   5              straight_inc = motor_inc;
+  179   5              
+  180   5            }
+  181   4          }
+  182   3         }
+  183   2          
+  184   2        }
+  185   1      
+  186   1        
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 4   
+
+  187   1        if(circle_L==2)
+  188   1        {
+  189   2          
+  190   2          if(motor_inc-straight_inc<700)
+  191   2          {
+  192   3            error=0;
+  193   3      //      error += 0.03;//
+  194   3            flag_shizi = 0;   //±£Ö¤Ô²»·ÄÚÊ®×Ö²»ÅÐ¶Ï
+  195   3      //      return;
+  196   3          }
+  197   2          else if(motor_inc-straight_inc>=700&&motor_inc-straight_inc<2500)
+  198   2          {
+  199   3            
+  200   3          }
+  201   2          else
+  202   2          {
+  203   3            
+  204   3            buzzer = 1;   //³ö×óÔ²»··äÃùÆ÷¹Ø
+  205   3            circle_count++;
+  206   3            cricle_count_order++;
+  207   3            circle_L=0;
+  208   3            straight_inc=motor_inc;
+  209   3          }
+  210   2        }
+  211   1        
+  212   1      //---------------------------------------------------------------------   ÓÒÔ²»·´úÂë----------------------
+             ----------------------------------------------------------
+  213   1      //-------------------------------------------------------------------------------------------------------
+             ---------------------------------------------------------------
+  214   1        
+  215   1        if(flag_circle == 2 && adc[3]>0.65&& circle_R == 0 && circle_L == 0 &&flag_shizi==0&&flag_shizi_R==0
+  216   1          && flag_barrier==0 && fabs(error) < 1 && (((cricle_order >> cricle_count_order) & 1)==0|| cricle_order 
+             -== 20))    //ÅÐ¶ÏÓÒÈë»·
+  217   1        {
+  218   2          circle_R=1;
+  219   2          
+  220   2          buzzer=0;   //½øÓÒÔ²»··äÃùÆ÷¿ª
+  221   2          
+  222   2          straight_inc=motor_inc;
+  223   2        }
+  224   1        
+  225   1        if(circle_R == 1)     //ÅÐ¶ÏÓÒÈë»·
+  226   1        {
+  227   2          
+  228   2        if(cricle_function_switch == 0)
+  229   2        {
+  230   3          if(motor_inc-straight_inc<=1250)
+  231   3          {
+  232   4      //      error=0.1;
+  233   4            
+  234   4          }
+  235   3          else if(motor_inc-straight_inc>1250)
+  236   3          {
+  237   4            r_target_speed = 31.0;
+  238   4            l_target_speed = 31.0;
+  239   4            x_inc+=gyro_x*0.005;
+  240   4            if(x_inc>cir_inc) 
+  241   4            {
+  242   5              cir_inc=x_inc;  
+  243   5            }
+  244   4      //      circle_inc=(int)fabs(x_inc);
+  245   4            circle_inc=(int)fabs(cir_inc);
+  246   4            
+  247   4            buzzer=1;     //½øÓÒÔ²»··äÃùÆ÷¹Ø
+  248   4            
+  249   4            if(circle_inc<=350)
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 5   
+
+  250   4            {
+  251   5      //        error=0.65;
+  252   5              error=0.85;
+  253   5              
+  254   5            }
+  255   4            else
+  256   4            {
+  257   5              
+  258   5              buzzer = 0;   //³öÓÒÔ²»··äÃùÆ÷¿ª
+  259   5              r_target_speed = target_speed_save;
+  260   5              l_target_speed = target_speed_save;
+  261   5              
+  262   5              circle_R = 2;
+  263   5              x_inc = 0;
+  264   5              cir_inc=0;
+  265   5              circle_inc = 0;
+  266   5              straight_inc = motor_inc;
+  267   5              
+  268   5            }
+  269   4          }
+  270   3         }
+  271   2          
+  272   2          else if(cricle_function_switch)
+  273   2         {
+  274   3           
+  275   3          
+  276   3          flag_shizi = 0;   //±£Ö¤Ô²»·ÄÚÊ®×Ö²»ÅÐ¶Ï
+  277   3        
+  278   3          if(motor_inc-straight_inc<=500)
+  279   3          {
+  280   4            error=0.1;
+  281   4            
+  282   4          }
+  283   3          else if(motor_inc-straight_inc>500)
+  284   3          {
+  285   4              x_inc+=gyro_x*0.005;
+  286   4              if(x_inc>cir_inc) 
+  287   4              {
+  288   5                cir_inc=x_inc;  
+  289   5              }
+  290   4        //      circle_inc=(int)fabs(x_inc);
+  291   4              circle_inc=(int)fabs(cir_inc);
+  292   4              
+  293   4              buzzer=1;     //½øÓÒÔ²»··äÃùÆ÷¹Ø
+  294   4              
+  295   4              if(circle_inc<=23)
+  296   4              {
+  297   5                error=0.52;
+  298   5              }
+  299   4              else if(circle_inc>23&&circle_inc<=360)
+  300   4              {
+  301   5        //        error=0.9;
+  302   5                //error=(1.25*(sqrt(adc[0])-sqrt(adc[6]))+1.25*(sqrt(adc[1])-sqrt(adc[5])))/(adc[1]+adc[5]+adc[6]+ad
+             -c[0]+1.35*adc[3]);
+  303   5              }
+  304   4      //        else if(circle_inc>330&&circle_inc<=350)
+  305   4      //        {
+  306   4      //        error=0.52;
+  307   4      //        }
+  308   4              else
+  309   4              {
+  310   5                
+  311   5                buzzer = 0;   //³öÓÒÔ²»··äÃùÆ÷¿ª
+  312   5                
+  313   5                
+  314   5                circle_R = 2;
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 6   
+
+  315   5                x_inc = 0;
+  316   5                cir_inc=0;
+  317   5                circle_inc = 0;
+  318   5                straight_inc = motor_inc;
+  319   5                
+  320   5              }
+  321   4            }
+  322   3            
+  323   3          }
+  324   2          
+  325   2        }
+  326   1      
+  327   1        if(circle_R==2)
+  328   1          {
+  329   2            
+  330   2          if(motor_inc-straight_inc<700)
+  331   2          {
+  332   3            error=0;
+  333   3      //      error += 0.03;//
+  334   3            flag_shizi = 0;   //±£Ö¤Ô²»·ÄÚÊ®×Ö²»ÅÐ¶Ï
+  335   3      //      return;
+  336   3          }
+  337   2          else if(motor_inc-straight_inc>=700&&motor_inc-straight_inc<2500)
+  338   2          {
+  339   3            
+  340   3          }
+  341   2            else
+  342   2            {
+  343   3              buzzer = 1;   //³öÓÒÔ²»··äÃùÆ÷¿ª
+  344   3              circle_count+=10; //ÓÒÔ²»·¼Ó10
+  345   3              cricle_count_order++;
+  346   3              circle_R=0;
+  347   3              straight_inc=motor_inc;
+  348   3            }
+  349   2          }
+  350   1      
+  351   1      //------------------------------------------------------------
+  352   1        
+  353   1          
+  354   1      //////////////±ÜÕÏ/////////////////////////////////////±ÜÕÏ////////////////////////////////±ÜÕÏ//////////
+             -//////////////////////±ÜÕÏ////////////////////////////////
+  355   1      
+  356   1        if(flag_circle==0&&circle_R==0&&circle_L==0&&flag_shizi==0&&flag_shizi_R==0)//&& (error>-0.25 && error<0
+             -.25))
+  357   1        {
+  358   2          
+  359   2          
+  360   2          
+  361   2          if(Lidar1.distance < 80 && Lidar1.distance > 35&& barrier==0 && fabs(error) < 0.7 && ((bizhang_order >>
+             - barrier_count) & 1))
+  362   2          {
+  363   3      //      if(     bizhang_window[0] < 780
+  364   3      //          &&  bizhang_window[1] < 780
+  365   3      //        )
+  366   3      //      {
+  367   3            barrier=1;
+  368   3            //  set_turn = 0.5;
+  369   3            //  r_target_speed = 10.0;
+  370   3            //  l_target_speed = 10.0;
+  371   3            bizhang_inc=motor_inc;
+  372   3            flag_barrier=1;
+  373   3            buzzer = 0;
+  374   3            barrier_count+=1;
+  375   3            x_inc = 0;
+  376   3      //      }
+  377   3          }
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 7   
+
+  378   2          else if(Lidar1.distance < 80 && Lidar1.distance > 35&& barrier==0 && fabs(error) < 0.7 &&  (((bizhang_o
+             -rder >> barrier_count) & 1)==0))
+  379   2          {
+  380   3            barrier=2;
+  381   3            bizhang_inc=motor_inc;
+  382   3          }
+  383   2          //-------------------ÆÂµÀ´¦Àí-------------------ÆÂµÀ´¦Àí-------------------ÆÂµÀ´¦Àí-------------------Æ
+             -ÂµÀ´¦Àí-------------------ÆÂµÀ´¦Àí
+  384   2          
+  385   2          
+  386   2          
+  387   2          
+  388   2          //////////±ÜÕÏ´¦Àí//////////////////////±ÜÕÏ´¦Àí////////////////////±ÜÕÏ´¦Àí////////////////////±ÜÕÏ´¦À
+             -í////////////////////±ÜÕÏ´¦Àí//////////
+  389   2          
+  390   2          
+  391   2        }
+  392   1      
+  393   1        if(barrier==2) 
+  394   1          {
+  395   2            if(motor_inc-bizhang_inc <= 8000)
+  396   2            {
+  397   3                r_target_speed = 24.0;
+  398   3                l_target_speed = 24.0;
+  399   3              buzzer = 0;
+  400   3            }
+  401   2            else if(motor_inc-bizhang_inc > 8000)
+  402   2            {
+  403   3              r_target_speed = 30.0;
+  404   3              l_target_speed = 30.0;
+  405   3              buzzer = 1;
+  406   3              barrier = 0;
+  407   3              barrier_count+=1;
+  408   3            }
+  409   2          }
+  410   1          
+  411   1          
+  412   1          
+  413   1        if(flag_barrier==1)   //×ó¹Õ
+  414   1        {
+  415   2          
+  416   2          x_inc+=gyro_x*0.005;
+  417   2          
+  418   2          if(bizhang==0)    //
+  419   2          {
+  420   3            if(x_inc > -34)
+  421   3            {
+  422   4              //set_turn = 0.8;
+  423   4              buzzer = 0;
+  424   4              error=-3.3;
+  425   4            }
+  426   3            else 
+  427   3            {
+  428   4              //set_turn = 0.26;
+  429   4              bizhang_inc = motor_inc;
+  430   4              bizhang=1;
+  431   4            }
+  432   3          }
+  433   2          
+  434   2          if(bizhang==1)    //Ö±×ß
+  435   2          {
+  436   3            if(motor_inc-bizhang_inc <= 800)
+  437   3            {
+  438   4        //      set_turn = 0.34;
+  439   4            //  r_target_speed = 31.0;
+  440   4            //  l_target_speed = 31.0;
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 8   
+
+  441   4              buzzer = 1;
+  442   4              error=0;
+  443   4            }
+  444   3            else if (motor_inc-bizhang_inc > 800)
+  445   3            {
+  446   4              
+  447   4              bizhang=2;
+  448   4            }
+  449   3          }
+  450   2          
+  451   2      //    if(bizhang==2)    //1¨¦?D
+  452   2      //    {
+  453   2      //      if(x_inc < 0)
+  454   2      //      {
+  455   2      //        //set_turn = 0.3;
+  456   2      //        buzzer = 0;
+  457   2      //        error=2.3;
+  458   2      //      }
+  459   2      //      else 
+  460   2      //      {
+  461   2      //        //set_turn = 0.26;
+  462   2      //        bizhang_inc = motor_inc;
+  463   2      //        bizhang=3;
+  464   2      //      }
+  465   2      //    }
+  466   2      //    
+  467   2      //    if(bizhang==3)     //?¡À¡Á?
+  468   2      //    {
+  469   2      //      if(motor_inc-bizhang_inc <= 800)
+  470   2      //      {
+  471   2      //        buzzer = 1;
+  472   2      //        error=0;
+  473   2      //      }
+  474   2      //      else if (motor_inc-bizhang_inc > 800)
+  475   2      //      {
+  476   2      //        
+  477   2      //        bizhang=4;
+  478   2      //      }
+  479   2      //    }
+  480   2          
+  481   2          if(bizhang==2)    //»ØÕý
+  482   2          {
+  483   3            if(x_inc < 0)
+  484   3            {
+  485   4            //  set_turn = 0.3;
+  486   4              buzzer = 0;
+  487   4              error=2.0;
+  488   4            }
+  489   3            else 
+  490   3            {
+  491   4          //    set_turn = 0.26;
+  492   4              bizhang_inc = motor_inc;
+  493   4              bizhang=3;
+  494   4            }
+  495   3          }
+  496   2          
+  497   2          if(bizhang==3)    //×ß»¡Ïß
+  498   2          {
+  499   3            if(motor_inc-bizhang_inc <= 600)
+  500   3            {
+  501   4              buzzer = 1;
+  502   4              error = 0.65;
+  503   4            
+  504   4            }
+  505   3            else if (motor_inc-bizhang_inc > 600)
+  506   3            {
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 9   
+
+  507   4              bizhang_inc = motor_inc;
+  508   4              bizhang=4;
+  509   4            }
+  510   3          }
+  511   2          
+  512   2          
+  513   2          
+  514   2          if(bizhang==4)    //¹ØÔªËØÑ­
+  515   2          {
+  516   3            if(motor_inc-bizhang_inc <= 800)
+  517   3            {
+  518   4              buzzer = 0;
+  519   4              
+  520   4            }
+  521   3            else if (motor_inc-bizhang_inc > 800)
+  522   3            {
+  523   4              bizhang=5;
+  524   4            }
+  525   3          }
+  526   2          
+  527   2          
+  528   2          if(bizhang==5)  
+  529   2          {
+  530   3            
+  531   3            barrier=0;
+  532   3            x_inc = 0;
+  533   3            buzzer = 1;
+  534   3            bizhang=0;
+  535   3            flag_barrier=0;
+  536   3            bizhang_inc = 0;
+  537   3          }
+  538   2        }
+  539   1      
+  540   1      }
+  541          
+  542          
+  543          
+  544          
+  545          
+  546          
+  547          
+  548          
+  549          
+  550          
+  551          
+  552          float pow2(float w)
+  553          {
+  554   1        float d = w*w;
+  555   1        
+  556   1        return d;
+  557   1      }
+  558          
+  559          
+  560          //float save_s_r[7] = {0,0,0,0,0,0,0};   //ÔÝÊ±
+  561          //int x = 0;
+  562          
+  563          
+  564          
+  565          
+  566          
+  567          float mask[2][7] = 
+  568              { 
+  569          
+  570              //  0.21,0.065,0.025,0.94,0.244,0.119,0.63,   //µÚÒ»°æ//Ò»ÐÐ×óÔ²»·£¬¶þÐÐÓÒÔ²»·
+  571                //0.526,0.082,0.115,0.95,0.085,0.087,0.309};  
+  572                
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 10  
+
+  573              //  0.25,0.06,0.028,0.92,0.26,0.11,0.68,    //µÚ¶þ°æ
+  574              //  0.42,0.056,0.128,0.95,0.078,0.085,0.315};
+  575          
+  576              // 0.285,0.06,0.042,1,0.3,0.173,0.65,   //µÚÈý°æ
+  577              //  0.55,0.11,0.14,0.99,0.068,0.08,0.33};
+  578                
+  579                // 0.3,0.07,0.04,0.996,0.274,0.122,0.444,   //µÚÈý°æ
+  580                //0.49,0.043,0.1,0.99,0.084,0.1,0.34};
+  581                
+  582                // 0.23,0.027,0.03,0.86,0.265,0.384,0.9,    //µÚËÄ°æ
+  583              //  0.82,0.043,0.1,0.87,0.078,0.055,0.28};
+  584              
+  585          //       0.39,0.10,0.03,1.023,0.318,0.194,0.68,   //µÚÎå°æ
+  586          //      0.75,0.093,0.10,1.0,0.12,0.075,0.30};
+  587                
+  588              //   0.32,0.117,0.093,0.89,0.04,0.075,0.53,   //µÚÁù°æ
+  589              //  0.642,0.21,0.155,0.854,0.174,0.096,0.286};
+  590              
+  591          //      0.28,0.245,0.163,0.87,0.135,0.187,0.445,    //µÚÆß°æ
+  592          //      0.51,0.255,0.173,0.8,0.145,0.285,0.295};
+  593              
+  594          //      0.342,0.08,0.09,0.9,0.022,0.079,0.5,    //µÚ°Ë°æ
+  595          //      0.51,0.255,0.01,0.925,0.08,0.242,0.389};
+  596          //    
+  597          //      0.364,0.25,0.085,1.023,0.073,0.107,0.64,    //µÚ¾Å°æÊÒÄÚ
+  598          //      0.6,0.082,0.027,0.930,0.15,0.214,0.327};
+  599              
+  600            //  0.46,0.23,0.097,1.0,0.025,0.1,1.0,        //µÚÊ®°æºáµç¸ÐÊÒÄÚ
+  601            //  1.0,0.11,0.087,0.97,0.115,0.235,0.5};
+  602              
+  603            //  0.478,0.20,0.035,1.023,0.134,0.178,0.634,         //µÚÊ®Ò»°æºáµç¸ÐÊÒÄÚºáµç¸Ð180
+  604            //  0.690,0.088,0.15,1.023,0.162,0.275,0.500};
+  605            
+  606                0.345,0.17,0.365,1.023,0.86,0.144,0.805,        //µÚÊ®¶þÍâ°Ë°æµç¸ÐÊÒÄÚ
+  607                0.78,0.088,0.666,1.01,0.405,0.26,0.41}; 
+  608          
+  609          char YUANHUAN(void)//ÓÃÕâ¸öÒÔ¼°µç¸ÐÖµÈ¥ÅÐ¶Ï´¦Àí
+  610          {
+  611   1        
+  612   1          
+  613   1        s_r = (pow2(mask[0][0] - adc[0]) + 
+  614   1               pow2(mask[0][1] - adc[1]) + 
+  615   1               pow2(mask[0][2] - adc[2]) + 
+  616   1               pow2(mask[0][3] - adc[3]) + 
+  617   1               pow2(mask[0][4] - adc[4]) + 
+  618   1               pow2(mask[0][5] - adc[5]) +
+  619   1               pow2(mask[0][6] - adc[6])
+  620   1        );
+  621   1      
+  622   1      //  s_r = (
+  623   1      //         pow2(mask[0][1] - adc[1]) + 
+  624   1      //         pow2(mask[0][2] - adc[2]) + 
+  625   1      //         pow2(mask[0][3] - adc[3]) + 
+  626   1      //         pow2(mask[0][4] - adc[4]) + 
+  627   1      //         pow2(mask[0][5] - adc[5])
+  628   1      //         );
+  629   1      
+  630   1      //  for(x = 0; x < 7; x++){
+  631   1      //      save_s_r[x] = (mask[0][x] - adc[x]) * (mask[0][x] - adc[x]) *1000;
+  632   1      //  
+  633   1      //  }
+  634   1      
+  635   1          s_r_RYUAN = (pow2(mask[1][0] - adc[0]) + 
+  636   1               pow2(mask[1][1] - adc[1]) + 
+  637   1               pow2(mask[1][2] - adc[2]) + 
+  638   1               pow2(mask[1][3] - adc[3]) + 
+C251 COMPILER V5.60.0,  element                                                            15/07/24  23:32:35  PAGE 11  
+
+  639   1               pow2(mask[1][4] - adc[4]) + 
+  640   1               pow2(mask[1][5] - adc[5]) + 
+  641   1               pow2(mask[1][6] - adc[6])
+  642   1        );
+  643   1        
+  644   1        
+  645   1          if(s_r_RYUAN*1000 < HUANDAO_Ryuzhi )
+  646   1              return 2;
+  647   1          if(s_r*1000 < HUANDAO_Lyuzhi )
+  648   1              return 1;
+  649   1        
+  650   1      
+  651   1        else return 0;
+  652   1      }
+  653          
+  654          
+  655          
+  656          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      2743     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =       238     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       382     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
