@@ -1,0 +1,1386 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+<title>C251 Release Notes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<style>
+p            { font-size: 10pt; font-family: Verdana }
+.LI2         { margin-top: 6px; margin-bottom: 6px }
+.Release     { font-weight: bold; background-color: #cccccc; padding: 6px }
+.ToolT       { font-size: 8pt; color: #808080 }
+.TinyT       { font-size: 8pt; text-align: center }
+ul           { font-size: 10pt; font-family: Verdana; list-style-type: square }
+ol           { font-size: 10pt; font-family: Verdana }
+h1           { font-weight: bold; font-size: 18pt; color: #000080; font-family: Verdana; 
+               text-align: center; margin-right: 3px }
+h2           { font-weight: bold; font-size: 14pt; color: #000080; font-family: Verdana; 
+               background-color: #cccccc; margin-top: 24px; margin-bottom: 3px; 
+               padding: 6px }
+h3           { font-weight: bold; font-size: 10pt; font-family: Verdana; background-color: 
+               #cccccc; margin-top: 24px; margin-bottom: 3px; padding: 6px }
+pre          { font-size: 10pt; font-family: Courier New; background-color: #ccffcc; 
+               margin-left: 12px; margin-right: 24px }
+li           { margin-top: 12px; margin-bottom: 6px }
+.style1 {
+      font-family: Verdana;
+}
+</style>
+<meta content="Microsoft FrontPage 12.0" name="GENERATOR">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<H1>Release Notes for C251<BR><FONT size=2>MCS<SUP>®</SUP> 251 Development Tool Kits</FONT> </H1>
+
+<P align=center>This file contains release notes and last minute changes.</P>
+<P class=TinyT>Information in this file, the accompany manuals, and software is <BR>
+Copyright © 2018 ARM Ltd and ARM Germany GmbH.<BR>All rights 
+reserved. </P>
+<HR>
+
+<H2>Contents</H2>
+<OL>
+  <LI class=LI2><A 
+  href="#WhatsNew">What's New in C251</A> 
+  <LI class=LI2><A 
+  href="#ExamplePrograms">Example Programs</A> 
+  <LI class=LI2><A 
+  href="#DeviceDatabase">Device Database™</A> 
+  <LI class=LI2><A 
+  href="#PeripheralSimulation">Peripheral Simulation</A> 
+  <LI class=LI2><A 
+  href="#TechnicalSupport">Technical Support</A> 
+  <LI class=LI2><A 
+  href="#ContactDetails">Contact Details</A> </LI></OL>
+
+<H2><A name=WhatsNew></A>What's New in C251</H2>
+<P>The following sections list the changes instituted in each release of the 
+C251 toolset.</P>
+
+<h3>C251 Version 5.60 </h3>
+<ul>
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+    <ul>
+      <li>Corrected: enum value gets silently truncated. Example:
+<pre>
+enum E { x = 0x12345 };
+</pre>
+Now <b>warning C118: 'x': enumeration value out of range</b> is shown.
+</li>
+<li>Corrected: a useless <b>warning C53: redefinition of 'testbyte_2': different memory spaces</b> appeared in following situations:
+<pre>
+extern unsigned char const edata testbyte_2;
+unsigned char const edata testbyte_2;
+</pre>
+</li>
+        <li>Corrected: allow slash <b>'/'</b> in addition to backslash <b>'\'</b> as a directory separator in all places.</li>
+        <li>Corrected: usage of <b>SET/EQU</b> for Assembler source output of aliased symbols.</li>
+        <li>Corrected: under some circumstances a wrong pointer size is used when a generic pointer to an array inside a struct is passed to functions with an variable argument list.  Example:
+<pre>
+struct {
+  char buffer[5];
+} names;
+char buffer[5];
+
+void foo(int output,...) {
+  foo(output,names.buffer);
+}
+</pre>
+    </li>
+
+    </ul>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>
+    <ul>
+      <li>Corrected: in extremely rare cases <b>error L121: IMPROPER FIXUP</b> and <b>error L138: CODE GENERATION: PROBLEM WHEN PROCESSING INSTRUCTIONS, CAUSE: SYNC ERROR</b> appeared near the end of a 64K block.</li>
+      <li>Corrected: in rare cases the linker crashs if using long function names and <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_ap_opt_grc.htm"><font color="#0065AF" size="2"><b>Global Register Coloring</b></font></a>.</li>
+      <li>Corrected: somehow not only function names were listed in the <a target="_blank" href="http://www.keil.com/support/man/docs/l251/l251_ol_calltree.htm"><b>call tree</b></a> and <b>warning L48: IGNORED RECURSION, CALL REMOVED</b> appeared.</li>
+      <li>Corrected: sometimes automatic rebuilds are not executed when <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_ap_opt_grc.htm"><font color="#0065AF" size="2"><b>Global Register Coloring</b></font></a> is used.</li>
+      <li>Corrected: in case of banked applications and under some circumstances the <b>CONST</b>- as well as the <b>CODE</b>-Segments located to the same bank address.</li>
+      <li>Corrected: under some circumstances the <a target="_blank" href="http://www.keil.com/support/man/docs/l251/l251_mergepublics.htm"><b>MERGEPUBLICS</b></a> does not work for <b>sbit</b> variables.</li>
+    </ul>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/a251.asp"><font color="#0065AF" size="2"><b>[A251 Macro Assembler]</b></font></a>
+    <ul>
+     <li>Corrected: allow slash <b>'/'</b> in addition to backslash <b>'\'</b> as a directory separator in all places.</li>
+     <li>Corrected: two line feeds in  <a target="_blank" href="http://www.keil.com/support/man/docs/a251/a251_mc_mpl.htm"><b>Macro Processor Language (MPL)</b></a> error message.</li>
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/support/man/docs/uv4cl/uv4cl_debug_commands.htm"><font color="#0065AF" size="2"><b>[Debug Commands]</b></font></a>
+    <ul>
+      <li>
+       Added: New debugger command <a target="_blank" href="http://www.keil.com/support/man/docs/uv4cl/uv4cl_cm_covtofile.htm"><b>COVTOFILE filespec [\\app][\module][\function] [DETAILS] [ASM]</b></a> 
+       which works like the <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_cm_coverage.htm"><b>COVERAGE</b></a> command but sends the output into a file. This is much faster than into the output window.
+      </li>
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/support/man/docs/uv4/default.htm"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+      <ul>
+        <li>This C251 release comes with <b>µVision V5.25.3</b>.</li>
+      </ul>
+    </li>
+
+
+    <li><font color="#0065AF" size="2"><b>[Supported Operating Systems]</b></font>
+        <ul>
+          <li>Refer to <a target="_blank"target="_blank" href="http://www2.keil.com/system-requirements/"><b>System Requirements Overview</b></a> for hardware and operating system requirements.</li>
+       </ul>
+    </li> 
+
+
+</ul>
+
+
+
+<h3>C251 Version 5.59 </h3>
+<ul>
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+    <ul>
+
+        <li>Corrected: under some circumstances the compiler does not evaluates a return expression correctly. Example:
+<pre>
+extern char xdata buffer[256];
+#define END (&buffer[256])
+ 
+unsigned short foo (char * ptr)
+{
+    return END - 9 - ptr;      --------------------------------------------------->+
+}                                                                                  |
+                                                                                   |
+                                                                                   V
+
+;       FUNCTION foo? (BEGIN)
+                                                 ; SOURCE LINE # 5   --------------+
+;---- Variable 'ptr' assigned to Register 'WR6' ----                               |  
+                                                 ; SOURCE LINE # 7                 | Wrong code generation. 
+000000 7D23           MOV      WR4,WR6                                             |/  This code does not consider the buffer
+000002 7E3400F7       MOV      WR6,#0F7H                  <------------------------o   as part of the calculation.
+000006 9D32           SUB      WR6,WR4
+                                                 ; SOURCE LINE # 8
+000008 AA             ERET
+;       FUNCTION foo? (END)
+
+
+;       FUNCTION foo? (BEGIN)
+                                                 ; SOURCE LINE # 5   --------------+
+000000 7D23           MOV      WR4,WR6                                             |   
+;---- Variable 'ptr' assigned to Register 'WR4' ----                               | Corrected code generation. 
+                                                 ; SOURCE LINE # 7                 |/
+000002 7E340000    E  MOV      WR6,#WORD0 buffer+247      <------------------------o
+000006 9D32           SUB      WR6,WR4                                              
+                                                 ; SOURCE LINE # 8                  
+000008 AA             ERET     
+;       FUNCTION foo? (END)
+</pre>
+        </li>
+
+
+        <li> Implemented the C99 feature of <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_pp_complexmacro.htm"><font color="#0065AF" size="2">variable arguments in macros</font></a>
+             in this C90 compiler. Example:
+		
+<pre>
+
+#define DEBUGPRINT(a, ...) do { if (debug) printf(a, __VA_ARGS__); } while (0)
+
+int debug,v1,v2,v3;
+
+void test() {
+  DEBUGPRINT("v1 = %d\n",v1);
+  DEBUGPRINT("v1 = %d, v2 = %d\n",v1,v2);
+  DEBUGPRINT("v1 = %d, v2 = %d, v3 = %d\n",v1,v2,v3);
+}
+
+</pre>
+        </li>
+
+
+
+
+        <li> Corrected : the compiler erroneously generates this bit variable in the standard
+             <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_le_memtypes.htm"><font color="#0065AF" size="2">bitaddressable area instead of the extended</font></a>
+             one. Exmaple:
+
+<pre>
+bit ebdata eb1;        /* The bit variable eb1 should be generated in the extended memory space */
+
+
+         Variable is placed in the                                         Now the variable is placed in
+         wrong memory space                                                the correct memory space
+
+Module Information          Static   Overlayable                  Module Information          Static   Overlayable
+------------------------------------------------                  ------------------------------------------------   
+.....                                                             .....
+  bit size             =         1     ------                       bit size             =    ------     ------
+  ebit size            =    ------     ------                       ebit size            =         1     ------
+</pre>
+        </li>
+
+
+
+
+        <li>
+Corrected: a  <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_userclass.htm"><font color="#0065AF" size="2">#pragma userclass directive</font></a> which is placed before an extern variable declaration 
+can override the userclass of the variable definition. Example:
+
+<pre>
+<b><i>PRJ_GLOBALS.H</i></b>
+.......
+#pragma userclass(hconst=PRJDEFAULT)
+#pragma userclass(ecode=PRJDEFAULT)    -----------------------------------------o
+.......                                                                         |
+struct t1 {                                                                     |
+   int a;                                                                       |
+   int b;                                                                       |
+};                                                                              |
+                                                                                |
+extern struct t1 const ecode s1;       -----------------------------------------o------+
+.......                                                                                 \
+                                                                                         \
+                                                                                          \
+<b><i>MAIN.C</i></b>                                                                                     \
+.......                                                                                     \
+#include PRJ_GLOBALS.H                                                                       \
+.......                                                                                       \
+#pragma userclass(hconst=MAINDEFAULT)                                                          \
+#pragma userclass(ecode=MAINDEFAULT)   ------------------------+                                \
+                                                               |                                 \
+struct t1 const ecode s1 = {0};   <i>/* The memory class of  s1 : ECODE_MAINDEFAULT has changed to : ECODE_PRJDEFAULT */</i>
+struct t1 const ecode s2 = {0}; 
+.......
+</pre>
+        </li>
+
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>
+    <ul>
+
+        <li>
+          Added: warning <b>L59</b> for <b>reentrant</b> and <b>recursive</b> function calls. When a reentrant function calls a non-reentrant one, the memory allocated by the Linker for local variables may overwrite memory used by another function. Example :
+<pre>
+<b>func1 (non-reentrant) -> func2 (reentrant) -> func3 (non-reentrant)</b>
+
+          In this example, the Linker does not know that the <b>func1</b> and <b>func3</b> may have a dependency, 
+          and may choose to reserve the same memory space for local variables.
+          Is such a case the Linker throws the new warning <b>L59</b>                 ---------------------------o
+                                                                                                          |
+*** WARNING L13: RECURSIVE CALL TO FUNCTION                                                               |
+*** WARNING L48: IGNORED RECURSIVE CALL                                                                   |
+*** WARNING L59: REENTRANT CALLS NON REENTRANT FUNCTION, COULD LEAD TO WRONG OVERLAY CALCULATION     <----o
+</pre>
+        </li>
+
+
+        <li>
+          Added: <b>LINKER CODE PACKING SYMBOLS OF MODULE</b> and <b>LINKER CODE PACKING CROSS-REFERENCE LISTING</b> extensions to the 
+          <a target="_blank" href="http://www.keil.com/support/man/docs/l251/l251_ln_mapfile.htm"><b>map</b></a> file.
+          These extensions provides a better overview when 
+          <a target="_blank" href="http://www.keil.com/support/man/docs/l251/l251_in_code_packing.htm"><b>linker code packing</b></a>
+		  is used because the order and the layout of the generated sections changes each time the linker combines common sequences. Example:
+<pre>
+<b>LINKER CODE PACKING SYMBOLS OF MODULE:  TEST (?C_STARTUP)</b>
+
+    VALUE       CLASS    TYPE      SYMBOL NAME
+    ==========================================
+    0080020CH   ECODE    PART      ?L?COM0001
+    00800222H   ECODE    BEGIN     ?L?COM0002
+    00800242H   ECODE    PART      ?L?COM0003
+    00800363H   ECODE    END       ?L?COM0004
+
+
+
+<b>LINKER CODE PACKING CROSS-REFERENCE LISTING</b>
+
+    NAME . . . . CLASS SIZE  TYPE   SEGMENT NAMES(ADDR)
+    ===================================================
+    
+    ?L?COM0001 . ECODE 000DH PART   ?L?COM0001  ?PR?MAIN??MAIN(FF02B9H)  ?PR?MAIN??MAIN(FF0297H)  ?PR?MAIN??MAIN(FF027FH)  
+    ?L?COM0002 . ECODE 0004H BEGIN  ?PR?XSTRLEN???LIBSAMPLE  ?PR?MAIN??MAIN(FF0221H)  ?PR?MAIN??MAIN(FF01F7H)
+    ?L?COM0003 . ECODE 0009H PART   ?L?COM0003  ?PR?MAIN??MAIN(FF021DH)  ?PR?MAIN??MAIN(FF01A7H)  
+    ?L?COM0004 . ECODE 0000H END    ?PR?XSTRCPY???LIBSAMPLE  ?PR?MAIN??MAIN(FF01E9H)  
+
+</pre>
+        </li>
+
+
+
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/a251.asp"><font color="#0065AF" size="2"><b>[A251 Macro Assembler]</b></font></a>
+    <ul>
+        <li> Removed: a path length limitation of 127 characters.</li>
+    </ul></li>
+
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/support/man/docs/uv4/default.htm"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+    <ul>
+    <li> This C251 release comes with <b>µVision V5.21.1</b>.</li>
+    <li> µVision now offers Japanese localization on Windows PCs with the 'primary language' Japanese.<br>
+         To select the language use the uVision menu item <a href="http://www.keil.com/support/man/docs/uv4/uv4_dg_other.htm" target="_blank"><b>Edit - Configuration - Other - Startup - Language</b></a>.</li>
+    <li> A <b><a target="_blank" href="https://armkeil.blob.core.windows.net/product/gs_MDK5_3_jp.pdf">Japanese Getting Started user's guide</a></b> is available in the uVision Books Window.</li>
+    <li> Added: new option to limit the <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_ut_findinfiles.htm"><b>Find in Files</b></a> utility to the "Current Document".</li>
+    <li> Enhanced: editor now supports Arabic, Baltic, Eastern European, Greek, Hebrew, Russian, Thai, Turkish, and Vietnamese character sets.</li>
+    <li> Corrected: <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_ui_bookmarks.htm"><b>Bookmark</b></a> navigation is now working only on the "Current Document".</li>
+    <li> Corrected: opening struct elements in the <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_db_dbg_watchwin.htm"><b>Watch Window</b></a> did not always show up-to-date values.</li>
+
+    </ul></li>
+
+    <li><font color="#0065AF" size="2"><b>[Supported Operating Systems]</b></font>
+      <ul>
+        <li>µVision and it's dynamically loaded libraries (DLL) have been ported to <b>MSVC 2015</b>. 
+            MSVC 2015 does not officially support Windows XP any longer.</li>
+        <li>Refer to <a target="_blank"target="_blank" href="http://www2.keil.com/system-requirements/"><b>System Requirements Overview</b></a> for hardware and operating system requirements.</li>
+    </ul></li> 	
+
+
+</ul>
+
+
+
+
+
+
+<h3>C251 Version 5.58 </h3>
+<ul>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+     <ul>
+
+     <li>
+      Corrected: the variable attribute  
+     <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_le_aligned.htm">__attribute__((aligned))</a> was overruled by the linker directive
+     <a target="_blank" href="http://www.keil.com/support/man/docs/l251/l251_nosortsize.htm">NOSORTSIZE</a>. Example:
+
+
+<pre>
+unsigned char ucValg __attribute__((aligned(4)));   /* The variable ucValg must be aligned on 4-byte boundary */
+
+void main (void)
+{
+:::::::::::
+}
+</pre>
+
+The MAP file for the above definition shows that the variable 'ucValg' was located at address 00000009H which is not a 4-byte boundary.
+<pre>
+00000009H   EDATA    BYTE      ucValg
+</pre>
+
+     </li>
+
+
+     <li> Corrected: under some circumstances wrong code will be generated in case of the following expression and high optimization levels:
+
+<pre>
+unsigned char GetByte(unsigned char i);
+unsigned short value;
+
+value = (GetByte(0) * 256) + GetByte(1);        /* Wrong result */
+</pre>
+      Generated assembler code:
+
+<pre>
+---- Assembler code for : (GetByte(0) * 256) -----
+000016 E4             CLR      A                ; <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_ap_parampassreg.htm">Parameter passing via R11=A to the callee function GetByte.</a>
+000017 9A000000    R  ECALL    GetByte?         ; 
+                                                ; The GetByte return value (unsigned char) is passed to the caller function via R11.
+
+---- Load word registers WR14 and WR12 for the upcoming multiplication ----
+00001B 0A7B           MOVZ     WR14,R11         ; WR14 = | 00  | R11 |   
+00001D 7E640100       MOV      WR12,#0100H      ; WR12 = | 01  | 00  |
+000021 AD67           MUL      WR12,WR14        ; The result is stored in the double word register DR12 = | WR12 | WR14 |, DR12 = | 00  |  00  | R11 | 00  |
+
+---- Assembler code for : GetByte(1) -----
+000023 7401           MOV      A,#01H           ;
+000025 9A000000    R  ECALL    GetByte?         ;
+
+000029 0A7B           MOVZ     WR14,R11         ; Overwrites previous result in word register WR14 
+00002B 2D76           ADD      WR14,WR12        ;
+</pre>
+
+
+
+     </li>
+
+
+     </ul>
+    </li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>	
+     <ul>
+       <li> Corrected: under some circumstances the L251 ingnores the <a href="http://www.keil.com/support/man/docs/l251/l251_nojmptab.htm" target="_empty">NOJMPTAB</a> directive and  
+            and throws erroneously the following error:
+<pre>
+*** ERROR L210: I/O ERROR ON INPUT FILE:
+    EXCEPTION 0021H: PATH OR FILE NOT FOUND
+    FILE: C:\KEIL\C51\LIB\L51_BANK.OBJ
+</pre>
+      </li>
+
+     </ul>
+    </li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/a251.asp"><font color="#0065AF" size="2"><b>[A251 Macro Assembler]</b></font></a>	
+     <ul>
+
+    <li> 
+
+      Corrected: under some circumstances the assembler shows wrong line numbers if an $include file cannot be found. The root cause for this behavior
+      is the erroneous line number generation by the preprocessor. Example: 
+
+<pre>
+NAME xxx
+S       SEGMENT  CODE
+    RSEG  S
+#line                 ; The preprocessor generates wrong line numbers if an $include file cannot be found.
+PUT:    MOV   A,#x    ; The assembler shows these wrong line numbers inside the build output window as part of a warning or error message.
+        RET
+        END
+
+</pre>
+   </li>
+
+     </ul>
+    </li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/support/man/docs/uv4/default.htm"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+    <ul>
+    <li> This C251 release comes with <b>µVision V5.16.2.0</b>.</li>
+    </ul></li>
+
+</ul>
+
+
+
+<h3>C251 Version 5.57 Release </h3>
+<ul>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+     <ul>
+       <li> Comes with compiler version <b>C251 V5.57</b></li>
+
+       <li> Removed: unnecessary <b>WARNING C53</b> when bits are defined and declared in the same module.</li>
+
+       <li> Corrected: problem with wrong type conversion when bitwise <b>NOT</b> operator (<b>~</b>) is used. Example:
+<pre>
+volatile unsigned long va, vb;
+
+void main(void) {
+   vb = va & ~0x2;     <-- wrong   : results in  vb = va & 0xFFFD instead of  vb = va & 0xFFFFFFFD
+   vb &= ~0x2;         <-- wrong   : results in  vb &= 0xFFFD instead of  vb &= 0xFFFFFFFD
+   vb = va & -3;       <-- correct : results in  vb = va & 0xFFFFFFFD
+}
+</pre>
+       </li>
+     </ul></li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>
+    <ul>
+    <li>
+     Corrected: <b>L251</b> code optimization does not remove common blocks for unused functions. These code blocks remains inside the image. Example: <br>
+<pre>
+unsigned char a, b, c;
+unsigned char darr [0x10];
+
+void FuncA (void) {
+  darr[c] = darr[b];
+}
+
+void FuncB (void) {
+  darr[c] = darr[b];
+}
+
+void FuncC (void) {
+  darr[c] = darr[a] + darr[b];
+}
+
+void FuncD (void) {
+  darr[c] = darr[a] + darr[b];
+}
+
+void main(void) {
+  FuncA ();
+  FuncB ();
+  while(1);
+}
+
+
+; FUNCTION FuncA (BEGIN)           ; FUNCTION FuncB (BEGIN)            ; FUNCTION FuncC (BEGIN)                ; FUNCTION FuncD (BEGIN)          
+    R     MOV     A,#LOW darr          R     MOV     A,#LOW darr           R     MOV     A,#LOW darr ----- + ----- R     MOV     A,#LOW darr     
+    R     ADD     A,b                  R     ADD     A,b                   R     ADD     A,b               |       R     ADD     A,b             
+          MOV     R0,A     ----- + -----     MOV     R0,A                        MOV     R0,A              |             MOV     R0,A            
+          MOV     A,@R0          |           MOV     A,@R0                       MOV     A,@R0             |             MOV     A,@R0           
+          MOV     R7,A           |           MOV     R7,A                        MOV     R7,A              |             MOV     R7,A            
+    R     MOV     A,#LOW darr    |     R     MOV     A,#LOW darr           R     MOV     A,#LOW darr ----- + ----- R     MOV     A,#LOW darr     
+    R     ADD     A,c            |     R     ADD     A,c                   R     ADD     A,a               |       R     ADD     A,a             
+          MOV     R0,A           |           MOV     R0,A                        MOV     R0,A              |             MOV     R0,A            
+          MOV     @R0,AR7  ----- + -----     MOV     @R0,AR7                     MOV     A,@R0             |             MOV     A,@R0           
+          RET                    |           RET                                 ADD     A,R7              |             ADD     A,R7            
+                                 o-> Common code for FuncA and FuncB             MOV     R7,A              |             MOV     R7,A            
+                                                                           R     MOV     A,#LOW darr       |       R     MOV     A,#LOW darr     
+                                                                           R     ADD     A,c               |       R     ADD     A,c             
+                                                                                 MOV     R0,A              |             MOV     R0,A            
+                                                                                 MOV     @R0,AR7           |             MOV     @R0,AR7         
+                                                                                 RET                       |             RET                     
+                                                                                                           o-> Common code for FuncC and FuncD   
+
+</pre>
+<p>
+In the example above the functions FuncC() and FuncD() are removed when the <a href="http://www.keil.com/support/man/docs/lx51/lx51_removeunused.htm" target="_blank"><b>REMOVEUNUSED</b></a> linker directive is specified.
+Now, the first part of the common code block (FUNCTION ?L?COM0001) is no longer necessary. In previous verions this was still part of the image. With the new linker enhancement even this code block is removed.
+</p>
+<pre>
+----- FUNCTION ?L?COM0001 (BEGIN) -----                                                                  
+000021 7408              MOV      A,#LOW darr  ---+                                                      
+000023 2519              ADD      A,b             |\                                                     
+000025 F8                MOV      R0,A            | \                                                    
+000026 E6                MOV      A,@R0           |  o-> Common code for FuncC and FuncD                 
+000027 FF                MOV      R7,A            |                                                      
+000028 7408              MOV      A,#LOW darr  ---+                                                      
+00002A         ?L?COM0002:                                                                               
+00002A F8                MOV      R0,A         ---+                                                      
+00002B E6                MOV      A,@R0           |\                                                     
+00002C FF                MOV      R7,A            | \                                                    
+00002D 7408              MOV      A,#LOW darr     |  o-> Common code for FuncA and FuncB                 
+00002F 251A              ADD      A,c             |                                                      
+000031 F8                MOV      R0,A            |                                                      
+000032 A607              MOV      @R0,AR7      ---+                                                      
+000034 22                RET                                                                             
+----- FUNCTION ?L?COM0001 (END) -------                                                                  
+
+</pre>
+      </li>
+
+    </ul></li>	
+
+
+    <li><a target="_blank" href="http://www.keil.com/uvision/"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+    <ul>
+    <li> This C251 release comes with <b>µVision V5.11.2.0</b>.</li>
+    </ul></li>  
+
+</ul>
+
+
+
+<h3>C251 Version 5.55 Release </h3>
+<ul>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+    <ul>
+    <li>Implemented local <b>SBIT</b> with external <b>EBDATA/BDATA</b>.</li>
+    <li>Implemented: unlimited length and count of command line <b>DEFINEs</b>.</li>	
+    </ul></li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/a251.asp"><font color="#0065AF" size="2"><b>[A251 Assembler]</b></font></a>
+    <ul>
+    <li>Allow <b>class BIT</b> and <b>EBIT</b> in expressions.</li>
+    <li>Corrected: an erroneously issued <b>error A57 'REGISTER USAGE' REQUIRES A PUBLIC CODE SYMBOL</b> which occurs when
+      <b>REGUSE</b> directive is used by mixed-case (composed by upper and lower case characters) symbols.
+    </li>
+    <li>Implemented <b>ALIGN</b> directive.</li>
+    <li>Generate workfile name dependent on <b>process number</b>.</li> 
+
+    </ul></li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>
+    <ul>
+    <li>Added: <b>Error 144: OVERLAY GROUP SEGMENT CANNOT HAVE 'LAST' ADDRESS ASSIGNMENT</b> message.
+         The <b>LAST</b> attribute cannot be used to locate segments that collect overlayable segments.</li>
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/uvision/"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+    <ul>
+    <li> This C251 release comes with <b>µVision V4.72.9.0</b>.</li>
+    </ul></li>  
+
+</ul>
+
+
+
+
+<h3>C251 Version 5.54 Release <font color="#F00000"> </font> </h3>
+<ul>
+
+    <li><a target="_blank" href="http://www.keil.com/c251/c251.asp"><font color="#0065AF" size="2"><b>[C251 Compiler]</b></font></a>
+    <ul>
+
+
+
+   <li> Added: optimization for handling of 32 bit numbers.</li>
+
+   <li> Added: optimization for for functions that do never return. This functions need to use <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_le_noreturn.htm"><b>__attribute__ ((noreturn))</b></a>.</li>
+   <li> Corrected: assembler instructions used as label name erroneously thrown an <b>Syntax-Error</b> in <b>SRC</b> mode.</li>
+   <li>   Corrected: a potential inline-assembler macro problem with <b>'#'</b> when meant for the <b>#imm</b> operand. Example:
+<pre>
+#pragma SRC
+
+#define AOP         \
+   __asm { NOP }    \
+   __asm { MOV A,#1 }    // incorrect generated error C302: misused # operator
+
+void main (void) {
+  AOP
+}
+</pre>
+
+   </li>
+
+
+  <li> Corrected: incorrect error <b>C143</b>  <em>"initializer is not a constant"</em> generation at cast of a constant pointer which is part of a struct. Example:
+<pre>
+struct GlStruct {
+  char a;
+  char cArr[1];
+};
+ 
+long offset = (long) (*(struct GlStruct*)0x0D000000).cArr;   // incorrect generated error: C143 "initializer is not a constant"
+</pre>
+   </li>
+
+
+   <li> Corrected: incorrect error <b>C83</b>  <em>"incompatible types"</em> generation when used floating point types togehter with <b>&</b> operator. Example:
+<pre>
+ volatile unsigned long  ul2;
+ volatile signed char    sc1;
+ volatile signed char    sc2;
+ 
+ void main(void) {
+   ul2 = 2147483647L;
+   sc1 = -1;
+   sc2 = 1;
+   (ul2 ^= (((( ! ( (double) (char)127))) > ((( -- sc2)))) & sc1));  // incorrect generated error C83: '&': incompatible types
+ }
+</pre>
+   </li>
+   
+
+   <li>
+   Corrected: <b>huge</b> at function definition is not allowed. Erroneously has been taken as <b>near</b>. Example:
+
+<pre>
+void huge hg_fnc() {  }   // The warning C65: 'hg_fnc': illegal use of near/far/huge will be generated.
+</pre>
+   </li>
+
+   </ul></li>
+
+    <li><a target="_blank" href="http://www.keil.com/c251/l251.asp"><font color="#0065AF" size="2"><b>[L251 Linker/Locater]</b></font></a>
+    <ul>
+  
+
+    <li> Corrected: a potential incorrect overlap of data segments when this features are used in combination:
+    <ul style=" MARGIN-LEFT: -12pt; LIST-STYLE-TYPE: circle">
+      <li> Overlapping segments by command line directives.</li>
+      <li> Linker Code Packing optimization with ROM (HUGE) model.</li>
+      <li> Code segments placed in the same 64KB region as the DATA segments.</li>
+    </ul></li>
+
+
+    </ul></li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/c251/a251.asp"><font color="#0065AF" size="2"><b>[A251 Assembler]</b></font></a>
+    <ul>
+    <li>Added: support for forward slash (<b>/</b>) as path seperator.</li>
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_library.htm"><font color="#0065AF" size="2"><b>[C Run-Time Library]</b></font></a>
+    <ul>
+    <li>Corrected: the function <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_free.htm"><font color="#0065AF" size="2"><b>free</b></font></a> failed when the complete memory pool was allocated.</li>
+    <li>Corrected: the <em>HPTR</em> variant of the function <a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_log.htm"><font color="#0065AF" size="2"><b>float LOG</b></font></a> does not work.</li>
+    </ul></li>
+
+
+
+    <li><a target="_blank" href="http://www.keil.com/uvision/"><font color="#0065AF" size="2"><b>[µVision]</b></font></a>
+    <ul>
+    <li>This C251 release is delivered with <b>µVision V4.60.6.9</b> IDE.</li>
+    </ul></li>
+
+
+
+</ul>
+
+
+<h3>C251 Version 5.50l Release </h3>
+<ul>
+
+   <li><font color="#800000" size="1"><b>[</b></font><b><font color="#800000" size="1">C251 Compiler]</font></b>
+   <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Improved: handling of rotation expressions. There will be optimized as a <b>_*rol_/_*ror_</b>. Example:
+<pre>
+unsigned short s1,s2;
+s1 = s2 << 10 | s2 >> 6;
+
+// There will be optimized as:
+
+s1 = _iror_(s2,6);
+</pre>
+    </li>
+
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Improved: optimization for shifts and rotations. Optimization of <b>mod</b> and <b>div</b> by 1. Example:
+<pre>
+int x = y%1;    // y%1 always results in 0. This have been optimized to an assignment of 0.
+
+int x = y/1;    // y/1 always results in y. This have been optimized to an assignment of y.
+</pre>
+    </li>
+
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Improved: branch optimization. In case of a short branch distance a smaller opcode will be used.
+   </li>
+
+   </ul> 
+   </li>
+
+
+   <li><a target="_blank" href="http://www.keil.com/uvision/"><h5><b>[µVision]</b></h5></a>
+   This C251 release is delivered with <b>µVision V4.60.8.0</b> IDE.
+   <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+   Improved: build process for applications which using cross module optimization.</li>
+   </ul>
+   </li>
+
+
+</ul>
+
+<h3>C251 Version 5.50a Release </h3>
+<ul>
+
+    <li><a target="_blank" href="http://www.keil.com/uvision/"><h5><b>[µVision]</b></h5></a>
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    This C251 release comes with <b>µVision V4.53.0.6</b> IDE.</li>
+    </li>
+
+</ul>
+
+<h3>C251 Version 5.50 Release </h3>
+<ul>
+
+   <li><font color="#800000" size="1"><b>[</b></font><b><font color="#800000" size="1">C251 Compiler]</font></b>
+
+   <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+      Removed multiple register loads with constant zero by using <b>SUB/XRL</b>.
+      Example:<br>
+<pre>
+unsigned short us,us1;
+signed short ss;
+
+void foo(void){
+  us  = 0;     // The selected register will be loaded only once with constant zero for all three statements.
+  us1 = 0;
+  ss  = 0;
+}
+</pre>
+   </li>
+
+
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+     Added a new warning message which occurs when a case label value exceeds the value range of the switch expression.
+      Example:<br>
+<pre>
+void foo(void){
+  signed char g;
+  
+  switch (g) {
+   case 255:   // "Warning case label value exceeds maximum" will be generated.
+     break;
+   case -1:
+     break;}
+ 
+}
+</pre>
+
+   </li>
+
+
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+     Removed multiple warning <b>C209</b> for same line.
+      Example:<br>
+<pre>
+unsigned char uc;
+
+uc = -257;     // The warning C209 appeared twice in previous versions.
+
+</pre>
+
+   </li>
+
+
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+Corrected issue in C251 which ignored REENTRANT pragma. Example:
+<pre>#pragma CODE SYMBOLS XSMALL MODECC7 INTR2 FUNCTIONS (REENTRANT) NOCASE ROM(HUGE)
+
+typedef int (foo)(void *p1, void *p2, void *p3, void *p4, int i); 
+foo foo_function; /* prototype the function */ 
+
+/* Is non-reentrant due to typedef'd prototype: */
+int foo_function(void *p1, void *p2, void *p3, void *p4, int i)  {
+  return i; 
+}
+
+#define NULL  (void *) 0
+void main(void){ 
+  volatile int ret=0; 
+   
+  ret=foo_function(NULL, NULL, NULL, NULL, 2);
+  if (ret != 2)
+    while(1);
+  while(1);
+} </pre>
+
+   </li>   
+
+   </ul>
+   </li>
+
+
+    <li><a target="_blank" href="http://www.keil.com/uvision/"><h5><b>[µVision]</b></h5></a>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+        This C251 release comes with <b>µVision V4.53.0.4</b> which includes the new <b>Scintilla</b> based editor.<br><br>
+     
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+        The new editor includes the following <b>enhancements</b>:<br>
+        Encoding for <b>UTF-8 Unicode</b>, <b>DBCS Korean</b>, <b>DBCS Japanese</b>, and <b>DBCS Chinese</b> languages. <b>Unicode</b> and Asian <b>ANSI</b> encoding is recognized automatically when a file is opened.<br>
+        Monospaced fonts and proportional fonts are supported.<br>
+        Syntax coloring has been extended.<br>
+        Unprintable characters, such as End-Of-Line, can be visualized in the editor.<br>
+        The <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_ui_outline.htm"><b>Outlining</b></a> menu has been simplified. Outlining information is saved and restored for each file.<br>
+        <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_ut_findinfiles.htm"><b>Search and replace</b></a> utilities (Incremental Find, Find-in-Files, and Replace) have been reworked.<br>
+        Text can be zoomed with <b>Ctrl+mouse wheel</b>. The information is saved and restored for each file.<br>
+        In case device-specific books are not found in the local installation, then <a target="_blank" href="http://www.keil.com">www.keil.com</a> is scanned for a matching document.
+     </li><br>
+
+     <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">and <b>corrections</b>:
+       
+        Scrolling quickly through large files with <b>Page Up</b> or <b>Page Down</b> works smoothly.<br>
+        The editor's context menu can be closed by pressing <b>ESC</b>.<br>
+        Breakpoints can be set now with a simple click into the editor margin.<br>
+        Under some circumstances the Debugger showed wrong values of arrays or structures in the Watch window.<br>
+     </li><br>
+     <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+      Refer to <a target="_blank" href="http://www.keil.com/support/man/docs/uv4/uv4_rev_hist.htm">Revision History</a> for a complete list.</li>
+     </li>
+     </ul></li>
+
+</ul>
+
+
+<H3>C251 Version 5.08 Release </H3>
+<UL>
+
+  <li>
+    <b><font color="#800000" size="1">[New Supported Devices]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt; FONT-SIZE: 9pt">
+    <b>PalmChip</b> <a target="_blank" href="http://www.keil.com/dd/chip/5750.htm">PALM8x251S</a>
+    </li>
+    </ul>
+  </li>
+
+
+  <li>
+    <b><font color="#800000" size="1">[C Run-Time Library]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    <b>free</b>: corrected a problem when all memory blocks were allocated, using the function <b>free</b> may generate a corrupted memory pool.</span> </li>
+    </ul>
+  </li>
+
+
+  <li>
+    <b><font color="#800000" size="1">[C251 Compiler]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Corrected: when assigning an char value to bit SFR registers the generated code may be incorrect. Example:
+    <pre>
+sbit ET0  = 0xA9;
+
+ES  = u8ES;    // previous compiler versions may generate incorrect code
+</pre>
+    </li>
+    </ul>
+  </li>
+
+
+
+  
+</UL>
+
+<H3>C251 Version 5.07b Release<font color="#F00000"> </font> </H3>
+<UL>
+
+
+  <li><font color="#800000" size="1"><b>[C Run-Time Library]</b></font>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Corrected: the functions <em>memcmp</em>, <em>hmemcmp</em>, <em>strcmp</em>,
+    <em>strncmp</em>, and <em>hstrcmp</em> now compare the memory content using
+    <strong>unsigned char</strong> (instead of signed char) data types.</li>
+   </ul>
+  </li>
+  <li><font color=#800000 size=1><b>[C251 Compiler]</b></font>
+   <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Corrected: problem with constant folding in address calculation. Example:
+   <pre>
+unsigned char array[0x2000];
+unsigned long l1, l2;
+ 
+void foo(void)  {
+  l1 = ((((unsigned long)array) + (0x100)) + (0x80));       // incorrectly calculated in previous versions
+  l2 = ((((unsigned long)&(array[0])) + (0x100)) + (0x80)); // work-arround
+} 
+</pre>
+     </ul>
+  </li>
+  <li>
+    <b><font color="#800000" size="1">[µVision4]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+                    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">This C251 release comes with 
+                    <span class="style1">µVision V4.22.00.</span> </li>
+      </ul>
+
+  </li>
+</ul>
+
+
+<H3>C251 Version 5.04b Release<font color="#F00000"> </font> </H3>
+<ul>
+
+<li>
+    <font color="#800000" size="1"><b>[</b></font><b><font color="#800000" size="1">C Run-Time Library]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+
+    <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Corrected: the function <em>toint</em> did not detect the value range 
+    0x59 - 0x40 as invalid. Now the function returns -1 for these values.
+    </li>
+   
+   <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+    Corrected: double numbers are incorrectly converted to float numbers 
+   when round-up is required. Example:
+   <pre>
+double d = 3.9999999999123;  // needs round-up to 4.0 when converting to float
+float f;
+f = d;                       // incorrect result due to incorrect round-up</pre>
+   </li>
+   </ul>
+
+
+  <li>
+    <b><font color="#800000" size="1">[µVision4]</font></b>
+  <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+      <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+      This C251 release comes with <span class="style1">µVision V4.14.16.</span>
+  </li>
+  </ul>
+
+
+</li>
+</ul>
+
+
+<H3>C251 Version 5.00 Release</H3>
+<ul>
+
+    <li><b><font color="#800000" size="1">[µVision4]</font></b>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+      <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+      This C251 release comes with the new <a target="_blank" href="http://www.keil.com/uvision/uv4.asp"> <strong> µVision4 IDE</strong></a>.
+      </li>
+      </ul></li>
+
+    <li><FONT color=#800000 size=1><B>[C251 Compiler]</b></font>
+    <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+        <li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+		Enhanced: register values are tracked and reload of identical values are 
+		removed to improve code density.</li>
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+		Add: 
+		NOCCODE directive to ensure proper optimization with linker code packing 
+		for setjmp/longjmp constructs.</li>
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+		Corrected: _irol_ and _iror_ intrinsic functions did not deliver correct 
+		results.</li>
+	 </ul></li>
+	 
+</ul>
+
+
+<H3>C251 Version 4.61a Release</H3>
+<UL>
+	<li><FONT color=#800000 size=1><B>[C251 Compiler - Header Files]</b></font><br>
+	Added: header file<em> srom.h</em> to obtain segment and class information in C source files.
+   	</li>
+	
+	<li><FONT color=#800000 size=1><B>[C251 Compiler]</b></font>
+	
+	<ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">Enhanced: 
+		several enhancements for code efficiency for pointer accesses and long 
+		shift operations.</li>
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+		Corrected: double multiplication with 2 was folded into shift operation 
+		with potential loss of precision.&nbsp; Example:<br>
+		<pre>float func (double f)  {
+  return (f * 2);      // shift-operation used instead of multiplication
+}</pre>
+		</li>
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+		Added:
+		<a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_nvm_const.htm">
+		NVM_CONST</a> directive that disables access optimizations to <em>const
+		</em>for in-system programming.</li>
+	</ul></li>
+
+</UL>
+
+
+<H3>C251 Version 4.55 Release</H3>
+<UL>
+	<LI><FONT color=#800000 size=1><B>[C251 Compiler]<br>
+	</b></font>Corrected: long shift in complex combinations (in this case an 
+	decryption / encryption algorithm) may create register clashes and therefore 
+	incorrect results.</UL>
+	
+<H3>C251 Version 4.54 Release</H3>
+<UL>
+	<LI><FONT color=#800000 size=1><B>[C251 Compiler]<br>
+	</b></font>Added: new directive 
+	<a target="_blank" href="http://www.keil.com/support/man/docs/c251/c251_hptr.htm">HPTR</a> that uses 32-bit arithmetic even for 
+	far address calculation.<LI><b><font color="#800000" size="1">[L251 Run-Time Library]</font></b>
+	<ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">Added: library functions hmemccpy, hmemchr, hmemcmp, hmemcpy, hmemmove, 
+		hmemset, hstrcmp, hstrcpy, hstrlen, and hstrncpy.</li>
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">Changed: run-time library is no longer build with the directive FIXDRK; 
+		when using Intel 80C251Sx C-step devices copy the libraries in the 
+		folder <strong>..\C251\LIB\FIXDRK</strong> to <strong>..\C251\LIB</strong>.</li>
+	</ul>
+	</UL>
+<UL>
+	<li><b><font color="#800000" size="1">[Monitor-251]</font></b> 
+	<br>
+		Corrected: setup of interrupt functions (over RETI instructions) did not 
+	work.</li>
+	</UL>
+
+
+<H3>C251 Version 4.52 Release</H3>
+<UL>
+  <LI><b><font color="#800000" size="1">[L251 Linker/Locater]</font></b>
+  <ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+	Enhanced: Linker Size Summary Line.</li>
+	<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+	Corrected: REMOVEDUNUSED did not correctly work with SROM symbols 
+		and linker code packing.</li>
+	<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+	Corrected: debug symbols of absolute bits generated in AX51 had wrong 
+	offset.</li>
+	<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">
+	Corrected: segment locating with the LAST keyword generated unnecessary 
+	memory gaps when used with code banking.</li>
+	</ul>
+	<LI><b><font color="#800000" size="1">[L251 Run-Time Library]</font></b>
+	<ul style="MARGIN-TOP: 6pt; PADDING-LEFT: 0px; FONT-SIZE: 10pt; MARGIN-BOTTOM: 6pt; MARGIN-LEFT: 0pt; FONT-FAMILY: verdana; LIST-STYLE-TYPE: square">
+		<li style="MARGIN-TOP: 3pt; PADDING-LEFT: 0px; MARGIN-BOTTOM: 3pt; MARGIN-LEFT: 12pt">Corrected: strncmp library function changed from signed char to unsigned 
+	char compare (ANSI requirement).</li>
+	</ul>
+	<LI><FONT color=#800000 size=1><B>[Device 
+	Support]<br>
+	</b></font>Corrected: instruction execution times in the device simulator 
+	for Dolphin Flip80251 Hurricane.<LI><FONT color=#800000 size=1><B>[A251 
+	Macro Assembler]<br>
+	</b></font>Added: the operators '&gt;&gt;', '&lt;&lt;', '|', '&amp;', '~' can now be used in 
+	expressions.</UL>
+
+
+<H3>Version 4.50 Release</H3>
+<ul>
+    <li><FONT color=#800000 size=1><b>[C251 Compiler]</b></font><br>
+	Added: new Optimization Levels 8 and 9 that enabled together with 
+	the OBJECTADVANCED directive Linker Code Packing.
+	<li><FONT color=#800000 size=1><b>[uVision3 IDE/Debugger]</b></font><br>
+	Added: Load Incremental that allows to load multiple applications to the 
+	debugger.</li>
+	<li><FONT color=#800000 size=1><b>[User's Manuals]</b></font><br>
+	Updated: the user's manuals are now updated and available as on-line 
+	documentation.</li>
+	<li><b><font color="#800000" size="1">[Monitor-251]</font></b><br>
+	Corrected: potential communication problems with low-cost USB-COM adapters.</li>
+</ul>
+
+
+<H3>C251 Version 4.01 Release</H3>
+<ul>
+  <li><font color=#800000 size=1><b>[C251 Compiler]</b></font><ul>
+		<li>Corrected: a problem with long shift factor 24.</li>
+		<li>Corrected: a problem with integer promotion when the result is 
+		divided. Example: <i>(x+y) / 2</i>; The sum <i>(x+y)<b> </b></i>was only 
+		calculated as unsigned char value, when both x and y are unsigned char.</li>
+</ul>
+
+	<p><font color="#800000" size="1"><b>[L251 Linker/Locater</b></font><b><font color="#800000" size="1">]</font></b><br>
+	Corrected: there might be incorrect <i>WARNING L15: MULTIPLE CALL TO 
+	FUNCTION</i> messages when using syntax: <b>OVERLAY (* ! (func1,
+    func2,func3,...))</b> to group more than just two functions.</p></UL>
+
+
+<H3>C251 Version 4.00 Release</H3>
+<UL>
+  <LI><font color=#800000 size=1><B>[uVision3 IDE/Debugger]</b></font><br>
+    Changed toolset to uVision3 IDE/Debugger which provides many new features. 
+  </LI>
+  
+  <LI><font color=#800000 size=1><B>[C251 Compiler]</b></font><br>
+    Several improvements on the code generator including:
+   <ul>
+		<li>Post increment and decrement is rearranged to optimize code.</li>
+		<li>Bit-field access and bit-field compares with constants are
+          optimized.</li>
+		<li>CALL/RET combination is replaced by JMP.</li>
+		<li>Enhanced allocation for register variables.</li>
+		<li>Multiplication, division, and modulo operation with long/int
+          optimized.</li>
+		<li>Long shift with constant shift factors 8/16/24.</li>
+   </ul></li>
+
+</UL>
+
+
+<H3>C251 Version 3.60 Release</H3>
+<UL>
+  <LI><B><FONT color=#800000 size=1>[uVision2 Debugger]<br>
+  </FONT></B>Added Device support for the Dolphin Flip80251 Typhoon IP core. 
+</LI>
+  <LI><font color="#800000" size="1"><b>[uVision2 IDE]</b></font><br>
+    Added a new dialog for project component management under <b>Project - Components, Environment
+    and Books</b>.  This dialog allows you to change the order of project targets and file groups. 
+</LI>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</b></font><br>
+  Corrected a code  generation problem on the stack correction with reentrant function call as show in the example below:
+  <pre>extern void pr (long l1, long l2, int i)  reentrant;
+long l;
+char c;  
+
+void test (void)  {
+  pr (0, 1, (l == 0));  // wrong stack correction SP-4 instead of SP-2 due to long compare.
+  pr (0, 1, (c == 0));  // wrong stack correction SP-1 instead of SP-2 due to char compare.
+}</pre>
+</LI>
+</UL>
+
+
+<H3>C251 Version 3.53 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Corrected code 
+  generation problems with <B>int</B> multiplication and internal errors. 
+</LI></UL>
+
+
+<H3>C251 Version 3.52 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Corrected code 
+  generation problem with internal errors and <B>int</B> multiplication. 
+</LI></UL>
+
+
+<H3>C251 Version 3.51 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Added bank 
+  switching capability. Refer to the <B>\C251\LIB\L251BANK.A51</B> configuration 
+  file. Bank switching works similarly to the code banking scheme used for 8051 
+  targets. A new banking mode (mode 3) allows bank switching using a 
+  memory-mapped EDATA port. Sample programs may be found in the 
+  <B>\C251\EXAMPLES\CODEBANKING</B> folder. 
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Improved 
+  compiler optimization on common tail merging. 
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Corrected a 
+  round-up problem in the double-precision floating-point library. 
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Corrected a 
+  problem in V3.20 that sometimes caused <B>for</B> and <B>while</B> loops to 
+  ignore constant assignments in the loop initialization. </LI></UL>
+  
+  
+<H3>C251 Version 3.20 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Added several 
+  minor enhancements. 
+  <LI><FONT color=#800000 size=1><B>[uVision2 Debugger]</B></FONT><BR>Stabilized 
+  support for MON251. 
+  <LI><FONT color=#800000 size=1><B>[uVision2 IDE]</B></FONT><BR>Added several 
+  new options to the Help Menu. 
+  <LI><FONT color=#800000 size=1><B>[uVision2 IDE]</B></FONT><BR>Improved the 
+  SVCS connection. 
+  <LI><FONT color=#800000 size=1><B>[uVision2 IDE]</B></FONT><BR>Corrected 
+  problems with environment variables. </LI></UL>
+
+  
+<H3>C251 Version 3.12 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[C251 Compiler]</B></FONT><BR>Corrected 
+  several minor problems. </LI></UL>
+  
+ 
+<H3>C251 Version 3.00 Release</H3>
+<UL>
+  <LI><FONT color=#800000 size=1><B>[uVision2 IDE]</B></FONT><BR>Added 
+  simulation support for all MCS<SUP>®</SUP> 251 devices. This includes the 
+  Intel 80C251Sx and 80C251Tx and the Atmel WM C251G1D, C251G2D, and C251A1. 
+  </LI></UL>
+
+  
+<H2><A name=ExamplePrograms></A>Example Programs</H2>
+<P>Example programs included in the <B>\C251\EXAMPLES</B> folder demonstrate how 
+to use the uVision4 Project Manager and Debugger (see the uVision Quick Start 
+Guide for details). Please refer to these if you are new to the tools and want 
+to get started quickly. 
+</P>
+
+<H2><A name=DeviceDatabase></A>Device Database™</H2>
+<P>A unique feature of the Keil uVision4 IDE is the <a target="_blank" href="http://www.keil.com/dd">Device Database™</a> which contains information 
+about more than 3500 supported microcontrollers. When you create a new uVision 
+project and select the target chip from the database, uVision sets all 
+assembler, compiler, linker, and debugger options for you. The only option you 
+must configure is the memory map. 
+</P>
+
+<P>As new devices become available, they are added to the database along with 
+data sheets and header files. For information about adding your own chips to the 
+database or about creating your own personal databases refer to the following 
+knowledgebase articles. </P>
+
+<ul>
+  <li class=LI2><a target="_blank" href="http://www.keil.com/support/docs/1421.htm">Adding Custom Parts to the Device Database</a></li>
+  <li class=LI2><a target="_blank" href="http://www.keil.com/support/docs/1645.htm">Creating Custom Databases</a></li>
+</ul>
+
+<H2><a name=PeripheralSimulation></a>Peripheral Simulation</H2>
+
+<p>The uVision4 Debugger provides 
+<a target="_blank" href="http://www.keil.com/uvision/db_sim_prf_peripherals.asp">complete simulation</a> for the CPU and on-chip peripherals of most embedded devices. To discover which 
+peripherals of a device are supported, in uVision4 select the Simulated Peripherals item from the Help menu. 
+You may also use the web-based <a target="_blank" href="http://www.keil.com/dd">Device Database™</a>. 
+We are constantly adding new devices and simulation support for on-chip peripherals so be sure to check 
+Device Database™ often.</p>
+
+<H2><a name=TechnicalSupport></a>Technical Support</H2>
+
+<p>At Keil Software, we are dedicated to providing you with the best development 
+tools and technical support. That's why we offer numerous ways you can get the 
+technical support you need to complete your embedded projects.
+</p>
+
+<ul>
+  <li class=LI2><a target="_blank" href="http://www.keil.com/support/knowledgebase.asp"><b>Technical Support Knowledgebase</b></a><br>
+  More than 2500 technical support questions and answers are available in the Support Solutions Knowledgebase.
+  When a new question arises, it is added to the knowledgebase which is continuously published to the Web. 
+  This enables you to get technical support at times when our support staff is unavailable.</li>
+  
+  <li class=LI2><a target="_blank" href="http://www.keil.com/appnotes"><b>Application Notes</b></a><br>
+  Numerous Application Notes help you decipher complex features and implement robust applications.</li>
+  
+  <li class=LI2><a target="_blank" href="http://www.keil.com/download"><b>Example Programs and Files</b></a><br>
+  Utility programs, example code, and sample projects are regularly added to the Download File section of the web site.</li> 
+  
+  <li class=LI2><a target="_blank" href="http://www.keil.com/forum"><b>Discussion Forum</b></a><br>
+  Post questions, comments, and suggestions to the Keil Software Discussion Forum and interact with other Keil users around the world. 
+  </li>
+
+  <li class=LI2><a href="http://www2.keil.com/support/silver" target="_blank"><b>Contact Technical Support</b></a><br>
+   Describes how to contact the Technical Support.</li>
+
+</ul>
+  
+<p>Many of the features of our Technical Support Knowledgebase and Web Site are 
+the results of your suggestions. If you have any ideas that will improve them, 
+please <a target="_blank" href="https://www.keil.com/support/feedback.asp">give us your feedback!</a> 
+</p>
+
+<H2><a name=ContactDetails></a>Contact Details</H2>
+
+<p>If you experience any problems or have any questions about this product, 
+contact one of our <a target="_blank"  href="http://www.keil.com/distis">distributors</a> or 
+offices for assistance. 
+</p>
+
+
+<div align=center>
+<center>
+<table cellSpacing=0 cellPadding=5 border=0>
+  <tbody>
+  <tr>
+    <td
+    style="BORDER-RIGHT: #800000 1px solid; BORDER-TOP: #800000 1px solid; BORDER-LEFT: #800000 1px solid; BORDER-BOTTOM: #800000 1px solid" 
+    vAlign=top noWrap bgColor=#ffffcc>
+      <p>
+	  <b>In the USA...</b><br><br>
+	  <b>ARM, Inc.</b><br>1501 10th 
+      Street, Suite 110<br>
+	  Plano, TX&nbsp; 75074<br>
+	  USA<br><br>
+	  800-348-8051 - Sales<br>
+	  972-312-1107 - Support<br>
+	  972-312-1159 - Fax<br><br>
+	  <a target="_blank" href="mailto:sales.us@keil.com">sales.us@keil.com</a> - Sales E-Mail<br>
+	  </p></td>
+
+    <td vAlign=top noWrap width=30></td>
+    <td style="BORDER-RIGHT: #800000 1px solid; BORDER-TOP: #800000 1px solid; BORDER-LEFT: #800000 1px solid; BORDER-BOTTOM: #800000 1px solid" vAlign=top noWrap bgColor=#ffffcc>
+      <p><b>In Europe...</b><br><br>
+	  <b>ARM Germany GmbH</b><br>
+	  Bretonischer Ring 16<br>
+	  D-85630 Grasbrunn<br>
+	  Germany<br><br>
+	  +49 89 456040-0 - Sales<br>
+	  +49 89 456040-24 - Support<br>
+	  +49 89 468162 - Fax<br><br>
+	  <a target="_blank" href="mailto:sales.intl@keil.com">sales.intl@keil.com</a> - Sales E-Mail<br>
+	  </p></td>
+	 </tr></tbody>
+	 </table>
+	 </center></div>
+<HR>
+
+<P class=TinyT>Copyright © 2018 ARM Ltd and ARM Germany GmbH.<br>
+All rights reserved.<br>
+Visit our web site at <a target="_blank" href="http://www.keil.com/">http://www.keil.com/</a>. 
+</P>
+</HTML>

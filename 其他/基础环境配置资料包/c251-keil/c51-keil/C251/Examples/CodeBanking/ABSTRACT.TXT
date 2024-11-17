@@ -1,0 +1,7 @@
+This program is a bank switching example that shows how you can
+run (simulate) code executing in several code banks.  It uses
+an XDATA port latch to simulate addtional address lines for the
+code banking.
+
+
+

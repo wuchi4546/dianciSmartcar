@@ -1,0 +1,16 @@
+The BLINKY project is the example program used in User's
+Guide: MCB251 Evaluation Board - Chapter 4 Programming.
+ 
+It does nothing more than blink the LEDs on the MCB251 
+evaluation board.           
+
+
+The Blinky program is available in different targets:
+  Simulator: Binary Mode:  Blinky example in TINY model 
+                           for Simulation
+  Simulator: Source Mode:  Blinky example in TINY model
+                           for Simulation
+  MCB251: Binary Mode:     Blinky example in TINY model
+                           for the MCB251 Eval Board
+  MCB251: Source Mode:     Blinky example in TINY model
+                           for the MCB251 Eval Board

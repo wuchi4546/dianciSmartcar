@@ -1,0 +1,33 @@
+This directory contains an I/O library for the MCB251/MCBx51 target board. The
+I/O library can be used to perform serial communication via the external serial 
+device of the MCB251/MCBx51 board.  The MCB251 library contains several 
+functions which are described below.  The I/O routines work with XON/XOFF
+protocol and can be directly linked together with C251 applictions.
+
+*** Note: Do not compile this with the evaluation version, otherwise some
+          other examples will not work.
+
+The library is written for the MCB251/MCBx51 board version 2 (for 
+Intel 251SB/TB and Atmel T80251G1D/G2D devices) and is provided for the
+SOURCE MODE of the CPU.
+
+
+Function              Description
+--------------------------------------------------------------------------
+char _getkey (void)   C function _getkey which accesses the external SIO
+                      device.
+
+char putchar (char)   C function putchar which accesses the external SIO
+                      device.
+
+bit instat (void)     checks if a character is available in the input buffer
+                      of the external SIO device.  If instat returns 0 no
+                      character is available.  If instat returns 1 a character
+                      can be read via the function _getkey.  The instat
+                      function is identical with checking the bit RI of the
+                      8051 serial interface.
+
+void XSIOinit (void)  initializes the external SIO interface for 8 bits,
+                      1 stop bit, no parity.  The baudrate can be defined
+                      within the source file XSIOINIT.A51.  The default
+                      baudrate is 57600 Baud (bps).
